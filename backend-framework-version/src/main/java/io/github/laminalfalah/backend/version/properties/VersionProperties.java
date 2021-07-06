@@ -1,9 +1,9 @@
-package io.github.laminalfalah.backend.version;
+package io.github.laminalfalah.backend.version.properties;
 
 /*
  * Copyright (C) 2021 the original author laminalfalah All Right Reserved.
  *
- * io.github.laminalfalah.backend.version
+ * io.github.laminalfalah.backend.version.properties
  *
  * This is part of the backend-framework.
  *
@@ -20,23 +20,27 @@ package io.github.laminalfalah.backend.version;
  * limitations under the License.
  */
 
-import io.github.laminalfalah.backend.version.properties.VersionProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * @author laminalfalah on 05/07/21
+ * @author laminalfalah on 06/07/21
  */
 
-@Configuration
-@EnableConfigurationProperties({
-        VersionProperties.class
-})
-@PropertySource(
-        ignoreResourceNotFound = true,
-        value = "classpath:version.properties"
-)
-public class VersionAutoConfiguration {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@ConfigurationProperties("backend.version")
+public class VersionProperties {
+
+    private String groupId;
+
+    private String artifactId;
+
+    private String version;
+
+    private String buildTime;
 
 }
