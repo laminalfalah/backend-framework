@@ -20,6 +20,8 @@ package io.github.laminalfalah.backend.mvc;
  * limitations under the License.
  */
 
+import io.github.laminalfalah.backend.common.CommonAutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
@@ -29,6 +31,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @PropertySource("classpath:mvc.properties")
+@AutoConfigureAfter(CommonAutoConfiguration.class)
 public class MvcAutoConfiguration {
 
 }

@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  io.github.laminalfalah.backend.mvc.MvcAutoConfiguration
+  io.github.laminalfalah.backend.mvc.MvcAutoConfiguration,\
+  io.github.laminalfalah.backend.mvc.MvcWebAutoConfiguration
