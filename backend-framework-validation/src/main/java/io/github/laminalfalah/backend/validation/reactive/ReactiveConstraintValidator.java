@@ -20,6 +20,7 @@ package io.github.laminalfalah.backend.validation.reactive;
  * limitations under the License.
  */
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import reactor.core.publisher.Mono;
 
 import javax.validation.ConstraintValidator;
@@ -30,6 +31,7 @@ import java.lang.annotation.Annotation;
  * @author laminalfalah on 06/07/21
  */
 
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 public interface ReactiveConstraintValidator<A extends Annotation, T> extends ConstraintValidator<A, T> {
 
     default boolean isValid(T value, ConstraintValidatorContext context) {

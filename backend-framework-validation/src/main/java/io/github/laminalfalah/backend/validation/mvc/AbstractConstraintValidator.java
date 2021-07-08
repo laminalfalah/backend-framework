@@ -20,6 +20,8 @@ package io.github.laminalfalah.backend.validation.mvc;
  * limitations under the License.
  */
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+
 import javax.validation.ConstraintValidatorContext;
 import java.lang.annotation.Annotation;
 
@@ -27,6 +29,7 @@ import java.lang.annotation.Annotation;
  * @author laminalfalah on 06/07/21
  */
 
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public abstract class AbstractConstraintValidator<A extends Annotation, T> implements MvcConstraintValidator<A, T> {
 
     private A annotation;
