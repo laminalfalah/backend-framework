@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  io.github.laminalfalah.backend.reactive.ReactiveAutoConfiguration
+  io.github.laminalfalah.backend.reactive.ReactiveAutoConfiguration,\
+  io.github.laminalfalah.backend.reactive.ReactiveWebFluxAutoConfiguration
