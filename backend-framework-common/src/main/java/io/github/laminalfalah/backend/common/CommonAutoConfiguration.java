@@ -20,6 +20,11 @@ package io.github.laminalfalah.backend.common;
  * limitations under the License.
  */
 
+import io.github.laminalfalah.backend.common.properties.PagingProperties;
+import io.github.laminalfalah.backend.validation.ValidationAutoConfiguration;
+import io.github.laminalfalah.backend.version.VersionAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
@@ -28,7 +33,17 @@ import org.springframework.context.annotation.PropertySource;
  */
 
 @Configuration
-@PropertySource("classpath:common.properties")
+@EnableConfigurationProperties({
+        PagingProperties.class
+})
+@PropertySource(
+        ignoreResourceNotFound = true,
+        value = "classpath:common.properties"
+)
+@ConditionalOnClass({
+        VersionAutoConfiguration.class,
+        ValidationAutoConfiguration.class
+})
 public class CommonAutoConfiguration {
 
 }
