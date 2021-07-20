@@ -7,7 +7,7 @@ on:
 
 jobs:
   publish:
-    if: github.repository == 'laminalfalah/code-backend-framework'
+    if: github.repository == 'laminalfalah/backend-framework'
     runs-on: ubuntu-latest
     permissions:
       contents: read
