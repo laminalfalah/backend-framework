@@ -1,14 +1,6 @@
 name: Publish package to the Maven Central Repository and GitHub Packages
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
-    types:
-      - closed
   release:
     types:
       - created
