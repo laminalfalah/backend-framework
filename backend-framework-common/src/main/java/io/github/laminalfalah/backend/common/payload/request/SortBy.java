@@ -21,6 +21,7 @@ package io.github.laminalfalah.backend.common.payload.request;
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -42,6 +43,7 @@ public class SortBy implements Serializable {
     private String column;
 
     @JsonProperty("direction")
+    @Schema(enumAsRef = true)
     private Direction direction;
 
 }

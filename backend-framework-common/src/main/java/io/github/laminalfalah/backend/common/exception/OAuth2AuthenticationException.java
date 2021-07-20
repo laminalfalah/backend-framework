@@ -20,11 +20,17 @@ package io.github.laminalfalah.backend.common.exception;
  * limitations under the License.
  */
 
+import org.springframework.http.HttpStatus;
+
 /**
  * @author laminalfalah on 08/07/21
  */
 
 public class OAuth2AuthenticationException extends RuntimeException {
+
+    public OAuth2AuthenticationException() {
+        super(HttpStatus.UNAUTHORIZED.getReasonPhrase());
+    }
 
     public OAuth2AuthenticationException(String message) {
         super(message);

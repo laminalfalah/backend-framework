@@ -20,11 +20,17 @@ package io.github.laminalfalah.backend.common.exception;
  * limitations under the License.
  */
 
+import org.springframework.http.HttpStatus;
+
 /**
  * @author laminalfalah on 07/07/21
  */
 
 public class AccessForbiddenException extends RuntimeException {
+
+    public AccessForbiddenException() {
+        super(HttpStatus.FORBIDDEN.getReasonPhrase());
+    }
 
     public AccessForbiddenException(String message) {
         super(message);

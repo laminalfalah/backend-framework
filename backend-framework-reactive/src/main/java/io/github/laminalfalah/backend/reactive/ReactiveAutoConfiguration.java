@@ -21,7 +21,12 @@ package io.github.laminalfalah.backend.reactive;
  */
 
 import io.github.laminalfalah.backend.common.CommonAutoConfiguration;
+import io.github.laminalfalah.backend.reactive.controller.ReactiveErrorController;
+import io.github.laminalfalah.backend.reactive.controller.VersionController;
+import io.github.laminalfalah.backend.reactive.error.ErrorAttribute;
+import io.github.laminalfalah.backend.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
@@ -32,6 +37,12 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @PropertySource("classpath:reactive.properties")
 @AutoConfigureAfter(CommonAutoConfiguration.class)
+@ComponentScan(basePackageClasses = {
+        ReactiveErrorController.class,
+        VersionController.class,
+        ErrorAttribute.class,
+        ErrorWebExceptionHandler.class
+})
 public class ReactiveAutoConfiguration {
 
 }

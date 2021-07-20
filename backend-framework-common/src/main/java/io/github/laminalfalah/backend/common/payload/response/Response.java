@@ -21,43 +21,24 @@ package io.github.laminalfalah.backend.common.payload.response;
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.List;
-import java.util.Map;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 /**
  * @author laminalfalah on 06/07/21
  */
 
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Response<T> {
-
-    @JsonProperty("timestamp")
-    private Long timestamp;
-
-    @JsonProperty("code")
-    private Integer code;
-
-    @JsonProperty("message")
-    private String message;
+@EqualsAndHashCode(callSuper = true)
+public class Response<T> extends AbstractResponse {
 
     @JsonProperty("paging")
     private Paging<?> paging;
 
     @JsonProperty("data")
     private T data;
-
-    @JsonProperty("errors")
-    private Map<String, List<String>> errors;
-
-    @JsonProperty("metadata")
-    private Map<String, Object> metadata;
 
 }

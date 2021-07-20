@@ -20,11 +20,17 @@ package io.github.laminalfalah.backend.common.exception;
  * limitations under the License.
  */
 
+import org.springframework.http.HttpStatus;
+
 /**
  * @author laminalfalah on 06/07/21
  */
 
 public class MethodHandleException extends RuntimeException {
+
+    public MethodHandleException() {
+        super(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+    }
 
     public MethodHandleException(String message) {
         super(message);

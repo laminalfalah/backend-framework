@@ -20,11 +20,17 @@ package io.github.laminalfalah.backend.common.exception;
  * limitations under the License.
  */
 
+import org.springframework.http.HttpStatus;
+
 /**
  * @author laminalfalah on 08/07/21
  */
 
 public class UnauthorizedException extends RuntimeException {
+
+    public UnauthorizedException() {
+        super(HttpStatus.UNAUTHORIZED.getReasonPhrase());
+    }
 
     public UnauthorizedException(String message) {
         super(message);

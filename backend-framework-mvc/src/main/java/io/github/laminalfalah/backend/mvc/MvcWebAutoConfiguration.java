@@ -21,16 +21,11 @@ package io.github.laminalfalah.backend.mvc;
  */
 
 import io.github.laminalfalah.backend.common.properties.PagingProperties;
-import io.github.laminalfalah.backend.mvc.controller.MvcErrorController;
-import io.github.laminalfalah.backend.mvc.controller.VersionController;
 import io.github.laminalfalah.backend.mvc.filter.FilterRequestArgumentResolver;
-import io.github.laminalfalah.backend.version.properties.VersionProperties;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -50,23 +45,9 @@ public class MvcWebAutoConfiguration implements WebMvcConfigurer {
 
     private final PagingProperties properties;
 
-    private final VersionProperties versionProperties;
-
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new FilterRequestArgumentResolver(properties));
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(VersionController.class)
-    public VersionController versionController() {
-        return new VersionController(versionProperties);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(MvcErrorController.class)
-    public MvcErrorController mvcErrorController() {
-        return new MvcErrorController();
     }
 
 }

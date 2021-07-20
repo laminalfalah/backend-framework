@@ -28,8 +28,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
 import org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -51,7 +51,6 @@ import java.util.concurrent.Executor;
         TaskSchedulingAutoConfiguration.class,
         CommonAutoConfiguration.class
 })
-@Import(TaskExecutionProperties.class)
 @EnableAsync
 @EnableScheduling
 public class CommonTaskAutoConfiguration implements AsyncConfigurer {
@@ -63,6 +62,7 @@ public class CommonTaskAutoConfiguration implements AsyncConfigurer {
     }
 
     @Override
+    @Bean(name = "taskExecutor")
     public Executor getAsyncExecutor() {
         var executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(properties.getPool().getCoreSize());

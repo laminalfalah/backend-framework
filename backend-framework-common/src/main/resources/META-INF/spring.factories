@@ -1,3 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   io.github.laminalfalah.backend.common.CommonAutoConfiguration,\
-  io.github.laminalfalah.backend.common.CommonTaskAutoConfiguration
+  io.github.laminalfalah.backend.common.CommonTaskAutoConfiguration,\
+  io.github.laminalfalah.backend.common.CommonSwaggerAutoConfiguration

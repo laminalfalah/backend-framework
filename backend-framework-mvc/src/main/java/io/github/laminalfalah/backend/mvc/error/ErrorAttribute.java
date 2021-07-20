@@ -25,7 +25,6 @@ import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -48,7 +47,6 @@ public class ErrorAttribute extends DefaultErrorAttributes {
         errors.put("timestamp", timestamp);
         errors.put("code", status);
         errors.put("message", error);
-        errors.put("errors", Collections.emptyList());
 
         return errors;
     }

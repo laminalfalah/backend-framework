@@ -20,15 +20,94 @@ package io.github.laminalfalah.backend.swagger;
  * limitations under the License.
  */
 
+import io.github.laminalfalah.backend.swagger.api.SwaggerIgnoredParameter;
+import io.github.laminalfalah.backend.swagger.api.SwaggerIgnoredParameterAnnotation;
+import io.github.laminalfalah.backend.swagger.factory.*;
+import io.github.laminalfalah.backend.swagger.properties.SwaggerProperties;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
+
+import java.util.ArrayList;
 
 /**
  * @author laminalfalah on 05/07/21
  */
 
 @Configuration
-@PropertySource("classpath:swagger.properties")
+@EnableConfigurationProperties({
+        SwaggerProperties.class
+})
+@PropertySource(
+        ignoreResourceNotFound = true,
+        value = "classpath:swagger.properties"
+)
 public class SwaggerAutoConfiguration {
+
+    @Bean
+    public ComponentsFactoryBean components(ApplicationContext context) {
+        var parameters = context.getBeansOfType(Parameter.class);
+        var componentsFactoryBean = new ComponentsFactoryBean();
+        componentsFactoryBean.setParameters(parameters);
+        return componentsFactoryBean;
+    }
+
+    @Bean
+    public OpenApiFactory openApi(@Autowired Components components, @Autowired SwaggerProperties properties) {
+        var openApiFactory = new OpenApiFactory();
+        openApiFactory.setComponents(components);
+        openApiFactory.setProperties(properties);
+        return openApiFactory;
+    }
+
+    @Bean
+    @ConditionalOnClass(name = "io.github.laminalfalah.backend.swagger.properties.SwaggerProperties")
+    @ConditionalOnMissingBean(name = "serviceApi")
+    public ServiceFactoryBean serviceApi(@Autowired Components components,
+                                         @Autowired SwaggerProperties properties,
+                                         @Value("${management.endpoints.web.base-path:/actuator}") String path) {
+        var serviceFactoryBean = new ServiceFactoryBean();
+        serviceFactoryBean.setComponents(components);
+        serviceFactoryBean.setProperties(properties);
+        serviceFactoryBean.setPath(path + "/**");
+        return serviceFactoryBean;
+    }
+
+    @Bean
+    @ConditionalOnClass(name = "org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties")
+    @ConditionalOnMissingBean(name = "actuatorApi")
+    public ActuatorFactoryBean actuatorApi(@Autowired Components components,
+                                           @Autowired SwaggerProperties properties,
+                                           @Value("${management.endpoints.web.base-path:/actuator}") String path) {
+        var actuatorFactoryBean = new ActuatorFactoryBean();
+        actuatorFactoryBean.setComponents(components);
+        actuatorFactoryBean.setProperties(properties);
+        actuatorFactoryBean.setPath(path + "/**");
+
+        return actuatorFactoryBean;
+    }
+
+    @Bean
+    public SwaggerIgnoredParameterAnnotation swaggerIgnoredParameterAnnotation() {
+        return new SwaggerIgnoredParameterAnnotation();
+    }
+
+    @Bean
+    @Primary
+    public IgnoredParameterAnnotationFactoryBean ignoredParameterAnnotationFactoryBean(ApplicationContext context) {
+        var ignoredParameters = context.getBeansOfType(SwaggerIgnoredParameter.class).values();
+        var factoryBean = new IgnoredParameterAnnotationFactoryBean();
+        factoryBean.setParameters(new ArrayList<>(ignoredParameters));
+        return factoryBean;
+    }
 
 }

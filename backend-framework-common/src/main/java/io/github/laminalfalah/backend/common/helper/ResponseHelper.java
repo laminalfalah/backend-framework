@@ -22,6 +22,7 @@ package io.github.laminalfalah.backend.common.helper;
 
 import io.github.laminalfalah.backend.common.payload.response.Paging;
 import io.github.laminalfalah.backend.common.payload.response.Response;
+import io.github.laminalfalah.backend.common.payload.response.ResponseError;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 
@@ -48,38 +49,37 @@ public final class ResponseHelper {
     }
 
     public static <T> Response<T> ok(T data, Paging<?> paging) {
-        return ResponseHelper.set(HttpStatus.OK, null, data, paging, null);
-    }
-
-    public static <T> Response<T> set(HttpStatus status, String message) {
-        return ResponseHelper.set(status, message, null, null, null);
-    }
-
-    public static <T> Response<T> set(HttpStatus status, T data) {
-        return ResponseHelper.set(status, null, data, null, null);
-    }
-
-    public static <T> Response<T> set(HttpStatus status, Map<String, List<String>> errors) {
-        return ResponseHelper.set(status, null, null, null, errors);
+        return ResponseHelper.set(HttpStatus.OK, null, data, paging);
     }
 
     public static <T> Response<T> set(HttpStatus status, String message, T data) {
-        return ResponseHelper.set(status, message, data, null, null);
+        return ResponseHelper.set(status, message, data, null);
     }
 
-    public static <T> Response<T> set(HttpStatus status, String message, Map<String, List<String>> errors) {
-        return ResponseHelper.set(status, message, null, null, errors);
-    }
-
-    private static <T> Response<T> set(HttpStatus status, String message, T data, Paging<?> paging, Map<String, List<String>> errors) {
+    private static <T> Response<T> set(HttpStatus status, String message, T data, Paging<?> paging) {
         return Response.<T>builder()
                 .timestamp(Instant.now().toEpochMilli())
                 .code(status.value())
                 .message(message == null || StringUtils.isEmpty(message) ? status.getReasonPhrase() : message)
                 .paging(paging)
                 .data(data)
+                .build();
+    }
+
+    public static ResponseError set(HttpStatus status, String message) {
+        return ResponseHelper.set(status, message, null);
+    }
+
+    public static ResponseError set(HttpStatus status, Map<String, List<String>> errors) {
+        return ResponseHelper.set(status, null, errors);
+    }
+
+    private static ResponseError set(HttpStatus status, String message, Map<String, List<String>> errors) {
+        return ResponseError.builder()
+                .timestamp(Instant.now().toEpochMilli())
+                .code(status.value())
+                .message(message == null || StringUtils.isEmpty(message) ? status.getReasonPhrase() : message)
                 .errors(errors)
-                .metadata(null)
                 .build();
     }
 

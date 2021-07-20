@@ -91,11 +91,11 @@ public final class FilterHelper {
         return value == null ? defaultValueGetter(filterField, filter) : func.apply(validateNumberNotNull(value));
     }
 
-    protected static boolean defaultValueBoolean(String value) {
+    protected static Boolean defaultValueBoolean(String value) {
         if (value != null && !StringUtils.isEmpty(value)) {
             return value.equalsIgnoreCase("true") || value.equalsIgnoreCase("1");
         } else {
-            return false;
+            return value == null ? null : false;
         }
     }
 

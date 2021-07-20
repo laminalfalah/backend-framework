@@ -20,19 +20,25 @@ package io.github.laminalfalah.backend.common.error;
  * limitations under the License.
  */
 
+import io.github.laminalfalah.backend.common.exception.DataNotFoundException;
 import io.github.laminalfalah.backend.common.exception.UnauthorizedException;
 import io.github.laminalfalah.backend.common.helper.ErrorHelper;
 import io.github.laminalfalah.backend.common.helper.ResponseHelper;
-import io.github.laminalfalah.backend.common.payload.response.Response;
+import io.github.laminalfalah.backend.common.payload.response.ResponseError;
 import org.slf4j.Logger;
 import org.springframework.beans.InvalidPropertyException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.core.NestedRuntimeException;
+import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.TypeMismatchDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -41,10 +47,8 @@ import org.springframework.web.context.request.async.AsyncRequestTimeoutExceptio
 import org.springframework.web.server.*;
 
 import javax.validation.ConstraintViolationException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author laminalfalah on 08/07/21
@@ -62,7 +66,7 @@ public interface ErrorController extends MessageSourceAware {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    default ResponseEntity<Response<Object>> httpMessageNotReadableException(HttpMessageNotReadableException e) {
+    default ResponseEntity<ResponseError> httpMessageNotReadableException(HttpMessageNotReadableException e) {
         getLogger().error(HttpMessageNotReadableException.class.getName(), e);
 
         return ResponseEntity.badRequest().body(ResponseHelper.set(HttpStatus.BAD_REQUEST, e.getMessage()));
@@ -70,7 +74,7 @@ public interface ErrorController extends MessageSourceAware {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
-    default ResponseEntity<Response<Object>> unauthorizedException(UnauthorizedException e) {
+    default ResponseEntity<ResponseError> unauthorizedException(UnauthorizedException e) {
         getLogger().error(UnauthorizedException.class.getName(), e);
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseHelper.set(HttpStatus.UNAUTHORIZED, e.getMessage()));
@@ -78,7 +82,7 @@ public interface ErrorController extends MessageSourceAware {
 
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(MethodNotAllowedException.class)
-    default ResponseEntity<Response<Object>> methodNotAllowedException(MethodNotAllowedException e) {
+    default ResponseEntity<ResponseError> methodNotAllowedException(MethodNotAllowedException e) {
         getLogger().error(MethodNotAllowedException.class.getName(), e);
 
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(ResponseHelper.set(HttpStatus.METHOD_NOT_ALLOWED, e.getMessage()));
@@ -86,7 +90,7 @@ public interface ErrorController extends MessageSourceAware {
 
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ExceptionHandler(NotAcceptableStatusException.class)
-    default ResponseEntity<Response<Object>> notAcceptableStatusException(NotAcceptableStatusException e) {
+    default ResponseEntity<ResponseError> notAcceptableStatusException(NotAcceptableStatusException e) {
         getLogger().error(NotAcceptableStatusException.class.getName(), e);
 
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseHelper.set(HttpStatus.NOT_ACCEPTABLE, e.getMessage()));
@@ -94,7 +98,7 @@ public interface ErrorController extends MessageSourceAware {
 
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     @ExceptionHandler(UnsupportedMediaTypeStatusException.class)
-    default ResponseEntity<Response<Object>> unsupportedMediaTypeStatusException(UnsupportedMediaTypeStatusException e) {
+    default ResponseEntity<ResponseError> unsupportedMediaTypeStatusException(UnsupportedMediaTypeStatusException e) {
         getLogger().error(UnsupportedMediaTypeStatusException.class.getName(), e);
 
         return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(ResponseHelper.set(HttpStatus.UNSUPPORTED_MEDIA_TYPE, e.getMessage()));
@@ -102,7 +106,7 @@ public interface ErrorController extends MessageSourceAware {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(HttpMessageNotWritableException.class)
-    default ResponseEntity<Response<Object>> httpMessageNotWritableException(HttpMessageNotWritableException e) {
+    default ResponseEntity<ResponseError> httpMessageNotWritableException(HttpMessageNotWritableException e) {
         getLogger().error(HttpMessageNotWritableException.class.getName(), e);
 
         return ResponseEntity.internalServerError().body(ResponseHelper.set(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
@@ -110,7 +114,7 @@ public interface ErrorController extends MessageSourceAware {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ServerErrorException.class)
-    default ResponseEntity<Response<Object>> serverErrorException(ServerErrorException e) {
+    default ResponseEntity<ResponseError> serverErrorException(ServerErrorException e) {
         getLogger().error(ServerErrorException.class.getName(), e);
 
         return ResponseEntity.internalServerError().body(ResponseHelper.set(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
@@ -118,7 +122,7 @@ public interface ErrorController extends MessageSourceAware {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    default ResponseEntity<Response<Object>> exception(Exception e) {
+    default ResponseEntity<ResponseError> exception(Exception e) {
         getLogger().error(Exception.class.getName(), e);
 
         return ResponseEntity.internalServerError().body(ResponseHelper.set(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
@@ -126,7 +130,7 @@ public interface ErrorController extends MessageSourceAware {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Throwable.class)
-    default ResponseEntity<Response<Object>> throwable(Throwable e) {
+    default ResponseEntity<ResponseError> throwable(Throwable e) {
         getLogger().error(Throwable.class.getName(), e);
 
         return ResponseEntity.internalServerError().body(ResponseHelper.set(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
@@ -134,14 +138,14 @@ public interface ErrorController extends MessageSourceAware {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
-    default ResponseEntity<Response<Object>> runtimeException(RuntimeException e) {
+    default ResponseEntity<ResponseError> runtimeException(RuntimeException e) {
         getLogger().error(RuntimeException.class.getName(), e);
 
         return ResponseEntity.internalServerError().body(ResponseHelper.set(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
     }
 
     @ExceptionHandler(ResponseStatusException.class)
-    default ResponseEntity<Response<Object>> responseStatusException(ResponseStatusException e) {
+    default ResponseEntity<ResponseError> responseStatusException(ResponseStatusException e) {
         getLogger().error(ResponseStatusException.class.getName(), e);
 
         Map<String, List<String>> errors = new HashMap<>();
@@ -150,8 +154,15 @@ public interface ErrorController extends MessageSourceAware {
         return ResponseEntity.status(e.getStatus()).body(ResponseHelper.set(e.getStatus(), errors));
     }
 
+    @ExceptionHandler(NestedRuntimeException.class)
+    default ResponseEntity<ResponseError> nestedRuntimeException(NestedRuntimeException e) {
+        getLogger().error(NestedRuntimeException.class.getName(), e);
+
+        return ResponseEntity.internalServerError().body(ResponseHelper.set(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
+    }
+
     @ExceptionHandler(ServerWebInputException.class)
-    default ResponseEntity<Response<Object>> serverWebInputException(ServerWebInputException e) {
+    default ResponseEntity<ResponseError> serverWebInputException(ServerWebInputException e) {
         getLogger().error(ServerWebInputException.class.getName(), e);
 
         Map<String, List<String>> errors = new HashMap<>();
@@ -161,8 +172,9 @@ public interface ErrorController extends MessageSourceAware {
         return ResponseEntity.status(e.getStatus()).body(ResponseHelper.set(e.getStatus(), errors));
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(WebExchangeBindException.class)
-    default ResponseEntity<Response<Object>> webExchangeBindException(WebExchangeBindException e) {
+    default ResponseEntity<ResponseError> webExchangeBindException(WebExchangeBindException e) {
         getLogger().error(WebExchangeBindException.class.getName(), e);
 
         return ResponseEntity.status(e.getStatus()).body(
@@ -173,12 +185,13 @@ public interface ErrorController extends MessageSourceAware {
         );
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
-    default ResponseEntity<Response<Object>> constraintViolationException(ConstraintViolationException e) {
+    default ResponseEntity<ResponseError> constraintViolationException(ConstraintViolationException e) {
         getLogger().error(ConstraintViolationException.class.getName(), e);
 
         return ResponseEntity.badRequest().body(
-                Response.builder()
+                ResponseError.builder()
                         .code(HttpStatus.BAD_REQUEST.value())
                         .errors(getErrorHelper().from(e.getConstraintViolations()))
                         .metadata(
@@ -190,8 +203,9 @@ public interface ErrorController extends MessageSourceAware {
         );
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidPropertyException.class)
-    default ResponseEntity<Response<Object>> invalidPropertyException(InvalidPropertyException e) {
+    default ResponseEntity<ResponseError> invalidPropertyException(InvalidPropertyException e) {
         getLogger().error(InvalidPropertyException.class.getName(), e);
 
         return ResponseEntity.badRequest().body(
@@ -203,7 +217,7 @@ public interface ErrorController extends MessageSourceAware {
     }
 
     @ExceptionHandler(TypeMismatchException.class)
-    default ResponseEntity<Response<Object>> typeMismatchException(TypeMismatchException e) {
+    default ResponseEntity<ResponseError> typeMismatchException(TypeMismatchException e) {
         getLogger().error(TypeMismatchException.class.getName(), e);
 
         Map<String, List<String>> errors = new HashMap<>();
@@ -213,8 +227,9 @@ public interface ErrorController extends MessageSourceAware {
         return ResponseEntity.internalServerError().body(ResponseHelper.set(HttpStatus.INTERNAL_SERVER_ERROR, errors));
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    default ResponseEntity<Response<Object>> methodArgumentNotValidException(MethodArgumentNotValidException e) {
+    default ResponseEntity<ResponseError> methodArgumentNotValidException(MethodArgumentNotValidException e) {
         getLogger().error(MethodArgumentNotValidException.class.getName(), e);
 
         return ResponseEntity.badRequest().body(
@@ -226,10 +241,73 @@ public interface ErrorController extends MessageSourceAware {
     }
 
     @ExceptionHandler(AsyncRequestTimeoutException.class)
-    default ResponseEntity<Response<Object>> asyncRequestTimeoutException(AsyncRequestTimeoutException e) {
+    default ResponseEntity<ResponseError> asyncRequestTimeoutException(AsyncRequestTimeoutException e) {
         getLogger().error(AsyncRequestTimeoutException.class.getName(), e);
 
         return ResponseEntity.internalServerError().body(ResponseHelper.set(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(DataNotFoundException.class)
+    default ResponseEntity<ResponseError> dataNotFoundException(DataNotFoundException e) {
+        getLogger().error(DataNotFoundException.class.getName(), e);
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseHelper.set(HttpStatus.NOT_FOUND, e.getMessage()));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    default ResponseEntity<ResponseError> dataIntegrityViolationException(DataIntegrityViolationException e) {
+        getLogger().error(DataIntegrityViolationException.class.getName(), e.getMessage());
+
+        Map<String, List<String>> errors = new HashMap<>();
+
+        var data = Arrays.stream(Objects.requireNonNull(e.getMessage()).split(";"))
+                .filter(s -> s.contains("violates"))
+                .filter(s -> !s.contains("Exception"))
+                .map(String::trim)
+                .map(s -> s.replace("idx_", ""))
+                .collect(Collectors.toSet());
+
+        errors.put("reason", new ArrayList<>(data));
+
+        return ResponseEntity.internalServerError().body(
+                ResponseHelper.set(HttpStatus.INTERNAL_SERVER_ERROR, errors)
+        );
+    }
+
+    @ExceptionHandler(DataAccessResourceFailureException.class)
+    default ResponseEntity<ResponseError> dataAccessResourceFailureException(DataAccessResourceFailureException e) {
+        getLogger().error(DataAccessResourceFailureException.class.getName(), e);
+
+        Map<String, List<String>> errors = new HashMap<>();
+
+        var data = Arrays.stream(Objects.requireNonNull(e.getMessage()).split(":"))
+                .filter(s -> !s.contains("Exception"))
+                .map(String::trim)
+                .collect(Collectors.toSet());
+
+        errors.put("reason", new ArrayList<>(data));
+
+        return ResponseEntity.internalServerError().body(
+                ResponseHelper.set(HttpStatus.INTERNAL_SERVER_ERROR, errors)
+        );
+    }
+
+    @ExceptionHandler(TypeMismatchDataAccessException.class)
+    default ResponseEntity<ResponseError> typeMismatchDataAccessException(TypeMismatchDataAccessException e) {
+        getLogger().error(TypeMismatchDataAccessException.class.getName(), e);
+
+        Map<String, List<String>> errors = new HashMap<>();
+
+        var data = Arrays.stream(Objects.requireNonNull(e.getMessage()).split(";"))
+                .filter(s -> !s.contains("Exception"))
+                .map(String::trim)
+                .collect(Collectors.toSet());
+
+        errors.put("reason", new ArrayList<>(data));
+
+        return ResponseEntity.internalServerError().body(
+                ResponseHelper.set(HttpStatus.INTERNAL_SERVER_ERROR, errors)
+        );
+    }
 }

@@ -20,7 +20,6 @@ package io.github.laminalfalah.backend.common.payload.request;
  * limitations under the License.
  */
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -46,7 +45,7 @@ public class Filter<T extends Serializable> implements Serializable {
     @JsonProperty("sort")
     private List<SortBy> sorts;
 
-    @JsonIgnore
+    @JsonProperty("params")
     private T params;
 
     @SneakyThrows

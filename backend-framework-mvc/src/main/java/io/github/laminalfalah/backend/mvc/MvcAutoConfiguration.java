@@ -21,7 +21,11 @@ package io.github.laminalfalah.backend.mvc;
  */
 
 import io.github.laminalfalah.backend.common.CommonAutoConfiguration;
+import io.github.laminalfalah.backend.mvc.controller.MvcErrorController;
+import io.github.laminalfalah.backend.mvc.controller.VersionController;
+import io.github.laminalfalah.backend.mvc.error.ErrorAttribute;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
@@ -32,6 +36,11 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @PropertySource("classpath:mvc.properties")
 @AutoConfigureAfter(CommonAutoConfiguration.class)
+@ComponentScan(basePackageClasses = {
+        MvcErrorController.class,
+        VersionController.class,
+        ErrorAttribute.class
+})
 public class MvcAutoConfiguration {
 
 }

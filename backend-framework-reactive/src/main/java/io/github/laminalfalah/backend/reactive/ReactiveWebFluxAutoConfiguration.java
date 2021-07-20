@@ -21,16 +21,11 @@ package io.github.laminalfalah.backend.reactive;
  */
 
 import io.github.laminalfalah.backend.common.properties.PagingProperties;
-import io.github.laminalfalah.backend.reactive.controller.ReactiveErrorController;
-import io.github.laminalfalah.backend.reactive.controller.VersionController;
 import io.github.laminalfalah.backend.reactive.filter.FilterRequestArgumentResolver;
-import io.github.laminalfalah.backend.version.properties.VersionProperties;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 import org.springframework.web.reactive.result.method.annotation.ArgumentResolverConfigurer;
@@ -48,23 +43,9 @@ public class ReactiveWebFluxAutoConfiguration implements WebFluxConfigurer {
 
     private final PagingProperties properties;
 
-    private final VersionProperties versionProperties;
-
     @Override
     public void configureArgumentResolvers(ArgumentResolverConfigurer configurer) {
         configurer.addCustomResolver(new FilterRequestArgumentResolver(properties));
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(VersionController.class)
-    public VersionController versionController() {
-        return new VersionController(versionProperties);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(ReactiveErrorController.class)
-    public ReactiveErrorController reactiveErrorController() {
-        return new ReactiveErrorController();
     }
 
 }

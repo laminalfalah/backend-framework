@@ -55,7 +55,9 @@ public class ErrorHelper {
                 var errorMessage = messageSource.getMessage(Objects.requireNonNull(fieldError.getCode()),
                         fieldError.getArguments(), fieldError.getDefaultMessage(), locale);
 
-                map.computeIfAbsent(field, f -> map.put(f, new ArrayList<>()));
+                if (!map.containsKey(field)) {
+                    map.put(field, new ArrayList<>());
+                }
 
                 map.get(field).add(errorMessage);
             });
@@ -77,7 +79,7 @@ public class ErrorHelper {
     }
 
     static void putEntry(Map<String, List<String>> map, String key, String value) {
-        map.computeIfAbsent(key, s -> map.put(s, Collections.emptyList()));
+        map.computeIfAbsent(key, s -> map.put(s, new ArrayList<>()));
         map.get(key).add(value);
     }
 

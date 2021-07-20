@@ -46,4 +46,5 @@ public class MvcErrorController implements ErrorController {
     public Logger getLogger() {
         return log;
     }
+
 }
