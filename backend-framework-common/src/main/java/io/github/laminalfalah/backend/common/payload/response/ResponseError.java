@@ -21,7 +21,10 @@ package io.github.laminalfalah.backend.common.payload.response;
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -42,6 +45,6 @@ public class ResponseError extends AbstractResponse {
     private Map<String, List<String>> errors;
 
     @JsonProperty("metadata")
-    private Map<String, Object> metadata;
+    private transient Map<String, Object> metadata;
 
 }

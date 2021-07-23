@@ -1,9 +1,9 @@
-package io.github.laminalfalah.backend.common.swagger;
+package io.github.laminalfalah.backend.reactive.annotation;
 
 /*
  * Copyright (C) 2021 the original author laminalfalah All Right Reserved.
  *
- * io.github.laminalfalah.backend.common.swagger
+ * io.github.laminalfalah.backend.reactive.annotation
  *
  * This is part of the backend-framework.
  *
@@ -20,23 +20,29 @@ package io.github.laminalfalah.backend.common.swagger;
  * limitations under the License.
  */
 
-import io.github.laminalfalah.backend.common.CommonProfile;
-import io.github.laminalfalah.backend.common.payload.request.Filter;
-import io.github.laminalfalah.backend.swagger.api.SwaggerIgnoredParameter;
-import org.springframework.context.annotation.Profile;
+import io.github.laminalfalah.backend.reactive.validator.EmailValidatorReactive;
 
-import java.lang.reflect.Parameter;
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import java.lang.annotation.*;
 
 /**
- * @author laminalfalah on 09/07/21
+ * @author laminalfalah on 06/07/21
  */
 
-@Profile(CommonProfile.SWAGGER)
-public class PagingRequestSwaggerIgnoredParameter implements SwaggerIgnoredParameter {
+@Inherited
+@Documented
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = {
+        EmailValidatorReactive.class
+})
+public @interface EmailValidationReactive {
 
-    @Override
-    public boolean isIgnored(Parameter parameter) {
-        return Filter.class.isAssignableFrom(parameter.getType());
-    }
+    String message() default "{error.EmailValidation.message}";
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
 
 }

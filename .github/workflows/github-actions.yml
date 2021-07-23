@@ -29,13 +29,6 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
-#      - name: Analyze with SonarCloud
-#        uses: sonarsource/sonarcloud-github-action@master
-#        run: |
-#          mvn -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Cache Maven archetypes
         uses: actions/cache@v2.1.6
         with:
@@ -44,12 +37,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Run the Maven verify phase
-#        run: |
-#          mvn --batch-mode --update-snapshots --no-transfer-progress verify -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
         run: |
           mvn --batch-mode --update-snapshots --no-transfer-progress verify -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Publish to the Maven Central Repository
         run: |
           mvn --batch-mode --no-transfer-progress -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} deploy -P deploy-central -DskipTests
@@ -62,6 +51,15 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           architecture: x64
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
+        env:
+          MAVEN_USERNAME: ${{ secrets.BACKEND_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.BACKEND_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
       - name: Publish to GitHub Packages
         run: |
           mvn --batch-mode --no-transfer-progress -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} deploy -P deploy-github -DskipTests

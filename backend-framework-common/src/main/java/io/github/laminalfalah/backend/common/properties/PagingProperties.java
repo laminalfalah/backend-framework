@@ -38,6 +38,10 @@ import java.io.Serializable;
 @ConfigurationProperties("backend.paging")
 public class PagingProperties {
 
+    private String defaultField;
+
+    private Direction defaultFieldDirection = Direction.DESC;
+
     private Long defaultPage = 1L;
 
     private Long defaultSize = 1000L;

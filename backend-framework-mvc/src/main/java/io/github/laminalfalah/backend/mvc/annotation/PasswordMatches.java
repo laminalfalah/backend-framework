@@ -1,9 +1,9 @@
-package io.github.laminalfalah.backend.common.payload.response;
+package io.github.laminalfalah.backend.mvc.annotation;
 
 /*
  * Copyright (C) 2021 the original author laminalfalah All Right Reserved.
  *
- * io.github.laminalfalah.backend.common.payload.response
+ * io.github.laminalfalah.backend.validation.annotation.mvc
  *
  * This is part of the backend-framework.
  *
@@ -20,28 +20,32 @@ package io.github.laminalfalah.backend.common.payload.response;
  * limitations under the License.
  */
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import io.github.laminalfalah.backend.mvc.validator.PasswordMatchesValidator;
+
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import java.lang.annotation.*;
 
 /**
  * @author laminalfalah on 06/07/21
  */
 
-@Data
-@SuperBuilder
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class Response<T> extends AbstractResponse {
+@Documented
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = {
+        PasswordMatchesValidator.class
+})
+public @interface PasswordMatches {
 
-    @JsonProperty("paging")
-    private transient Paging<?> paging;
+    String message() default "{error.PasswordMatches.message}";
 
-    @JsonProperty("data")
-    private transient T data;
+    String fieldPassword() default "password";
+
+    String fieldConfirmPassword() default "confirmPassword";
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
 
 }

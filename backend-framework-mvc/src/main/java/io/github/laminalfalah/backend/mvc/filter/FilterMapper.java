@@ -86,6 +86,12 @@ public class FilterMapper {
                 properties
         ));
 
+        if (properties.getDefaultField() != null &&
+                filter.getSorts().stream().anyMatch(v -> !v.getColumn().equalsIgnoreCase(properties.getDefaultField()))
+        ) {
+            addDefaultFilter(filter, properties.getDefaultField(), properties.getDefaultFieldDirection());
+        }
+
         if (properties.getLog() != null && properties.getLog()) {
             log.info("{}", filter);
         }
@@ -116,4 +122,5 @@ public class FilterMapper {
 
         return filter;
     }
+
 }

@@ -20,8 +20,7 @@ package io.github.laminalfalah.backend.reactive.controller;
  * limitations under the License.
  */
 
-import io.github.laminalfalah.backend.version.properties.VersionProperties;
-import org.springframework.beans.factory.InitializingBean;
+import io.github.laminalfalah.backend.common.version.Versioning;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,27 +33,11 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping(path = "/version", produces = MediaType.TEXT_PLAIN_VALUE)
-public class VersionController implements InitializingBean {
-
-    private final VersionProperties properties;
-
-    private String maven;
-
-    public VersionController(VersionProperties properties) {
-        this.properties = properties;
-    }
-
-    @Override
-    public void afterPropertiesSet() {
-        maven = "maven.groupId=" + properties.getGroupId() + "\n" +
-                "maven.artifactId=" + properties.getArtifactId() + "\n" +
-                "maven.pom.version=" + properties.getVersion() + "\n" +
-                "maven.build.time=" + properties.getBuildTime();
-    }
+public class VersionController extends Versioning {
 
     @GetMapping
     public Mono<String> version() {
-        return Mono.fromCallable(() -> maven);
+        return Mono.fromCallable(super::versionMaven);
     }
 
 }

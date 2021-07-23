@@ -70,17 +70,15 @@ public class ErrorHelper {
         Map<String, List<String>> map = new HashMap<>();
 
         constraintViolations.forEach(violation -> {
-            for (String attribute : getAttributes(violation)) {
-                putEntry(map, attribute, violation.getMessage());
+            for (String attr : getAttributes(violation)) {
+                if (!map.containsKey(attr)) {
+                    map.put(attr, new ArrayList<>());
+                }
+                map.get(attr).add(violation.getMessage());
             }
         });
 
         return map;
-    }
-
-    static void putEntry(Map<String, List<String>> map, String key, String value) {
-        map.computeIfAbsent(key, s -> map.put(s, new ArrayList<>()));
-        map.get(key).add(value);
     }
 
     static String[] getAttributes(ConstraintViolation<?> constraintViolation) {

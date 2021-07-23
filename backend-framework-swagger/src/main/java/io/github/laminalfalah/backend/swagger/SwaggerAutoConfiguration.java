@@ -32,10 +32,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 
 import java.util.ArrayList;
 
@@ -51,6 +48,7 @@ import java.util.ArrayList;
         ignoreResourceNotFound = true,
         value = "classpath:swagger.properties"
 )
+@Profile("swagger")
 public class SwaggerAutoConfiguration {
 
     @Bean

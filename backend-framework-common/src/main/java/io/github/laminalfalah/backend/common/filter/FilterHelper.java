@@ -72,17 +72,6 @@ public final class FilterHelper {
                 !key.equalsIgnoreCase(pagingProperties.getQuery().getSortKey());
     }
 
-    /**
-     * @deprecated
-     * @param value get from request
-     * @param defaultValue set default value
-     * @return String
-     */
-    @Deprecated(forRemoval = true)
-    protected static String defaultValue(String value, String defaultValue) {
-        return value != null && !StringUtils.isEmpty(value.trim()) ? value : defaultValue;
-    }
-
     protected static String defaultValue(String value, FilterField filterField, Filter<?> filter) {
         return value != null && !StringUtils.isEmpty(value.trim()) ? value : defaultValueGetter(filterField, filter);
     }

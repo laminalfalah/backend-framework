@@ -20,7 +20,9 @@ package io.github.laminalfalah.backend.common.annotation;
  * limitations under the License.
  */
 
+import io.github.laminalfalah.backend.common.CommonProfile;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.context.annotation.Profile;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -31,6 +33,7 @@ import java.lang.annotation.Target;
  * @author laminalfalah on 09/07/21
  */
 
+@Profile(CommonProfile.SWAGGER)
 @Parameter(name = "page", ref = "queryPagingRequestPage")
 @Parameter(name = "size", ref = "queryPagingRequestSize")
 @Parameter(name = "sort", ref = "queryPagingRequestSort")

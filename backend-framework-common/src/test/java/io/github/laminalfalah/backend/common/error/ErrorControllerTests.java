@@ -20,12 +20,10 @@ package io.github.laminalfalah.backend.common.error;
  * limitations under the License.
  */
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.laminalfalah.backend.common.exception.DataNotFoundException;
 import io.github.laminalfalah.backend.common.exception.UnauthorizedException;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
@@ -45,16 +43,22 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
 import org.springframework.web.server.*;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.Validator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -179,7 +183,13 @@ class ErrorControllerTests {
     @Order(14)
     @DisplayName("Testing ConstraintViolation")
     void constraintViolationException() throws Exception {
-        mockMvc.perform(post("/example/constraint-violation").contentType(MediaType.APPLICATION_JSON))
+        Application.ExampleRequest request = Application.ExampleRequest.builder().name(null).build();
+        ObjectMapper mapper = new ObjectMapper();
+        String requestJson = mapper.writeValueAsString(request);
+        mockMvc.perform(post("/example/constraint-violation")
+                .content(requestJson)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isBadRequest());
     }
 
@@ -244,6 +254,8 @@ class ErrorControllerTests {
 
         @Data
         @Builder
+        @NoArgsConstructor
+        @AllArgsConstructor
         public static class ExampleRequest {
             @NotNull
             @NotEmpty
@@ -270,6 +282,9 @@ class ErrorControllerTests {
         @RequestMapping(path = "/example")
         public static class ExampleController {
 
+            @Autowired
+            private Validator validator;
+            
             @GetMapping("/http-message-not-readable-exception")
             public String httpMessageNotReadableException() {
                 throw new HttpMessageNotReadableException("Ups", new HttpInputMessage() {
@@ -342,12 +357,16 @@ class ErrorControllerTests {
             }
 
             @PostMapping("/web-exchange-bind")
-            public String webExchangeBind(@Validated @RequestBody ExampleRequest request) {
+            public String webExchangeBind(@Valid @RequestBody ExampleRequest request) {
                 return "OK";
             }
 
             @PostMapping("/constraint-violation")
-            public String constraintViolation(@Validated @RequestBody ExampleRequest request) {
+            public String constraintViolation(@RequestBody ExampleRequest request) {
+                Set<ConstraintViolation<ExampleRequest>> constraintViolations = validator.validate(request);
+                if (!constraintViolations.isEmpty()) {
+                    throw new ConstraintViolationException(constraintViolations);
+                }
                 return "OK";
             }
 

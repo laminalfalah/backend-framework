@@ -26,6 +26,9 @@ import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author laminalfalah on 07/07/21
@@ -41,6 +44,9 @@ public class FilterField extends AbstractFieldAnnotationHelper<FilterColumn> {
 
     @Getter
     private final String timeFormatter;
+
+    @Getter
+    private final List<Operation> operations;
 
     public static FilterField.Builder builder() {
         return new Builder();
@@ -72,6 +78,7 @@ public class FilterField extends AbstractFieldAnnotationHelper<FilterColumn> {
         this.dateFormatter = getFilterDateFormat(annotation);
         this.dateTimeFormatter = getFilterDateTimeFormat(annotation);
         this.timeFormatter = getFilterTimeFormat(annotation);
+        this.operations = getOperations(annotation);
     }
 
     protected String getFilterParameterName(FilterColumn column) {
@@ -94,6 +101,10 @@ public class FilterField extends AbstractFieldAnnotationHelper<FilterColumn> {
 
     private String getFilterTimeFormat(FilterColumn column) {
         return column == null || StringUtils.isEmpty(column.timeFormat().trim()) ? "HH:mm:ss" : column.timeFormat();
+    }
+
+    private List<Operation> getOperations(FilterColumn column) {
+        return column == null ? Collections.singletonList(Operation.EQUALS) : Arrays.asList(column.operations());
     }
 
 }

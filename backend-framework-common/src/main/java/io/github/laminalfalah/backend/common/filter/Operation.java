@@ -1,9 +1,9 @@
-package io.github.laminalfalah.backend.common.swagger;
+package io.github.laminalfalah.backend.common.filter;
 
 /*
  * Copyright (C) 2021 the original author laminalfalah All Right Reserved.
  *
- * io.github.laminalfalah.backend.common.swagger
+ * io.github.laminalfalah.backend.common.filter
  *
  * This is part of the backend-framework.
  *
@@ -20,23 +20,12 @@ package io.github.laminalfalah.backend.common.swagger;
  * limitations under the License.
  */
 
-import io.github.laminalfalah.backend.common.CommonProfile;
-import io.github.laminalfalah.backend.common.payload.request.Filter;
-import io.github.laminalfalah.backend.swagger.api.SwaggerIgnoredParameter;
-import org.springframework.context.annotation.Profile;
-
-import java.lang.reflect.Parameter;
-
 /**
- * @author laminalfalah on 09/07/21
+ * @author laminalfalah on 22/07/21
  */
 
-@Profile(CommonProfile.SWAGGER)
-public class PagingRequestSwaggerIgnoredParameter implements SwaggerIgnoredParameter {
-
-    @Override
-    public boolean isIgnored(Parameter parameter) {
-        return Filter.class.isAssignableFrom(parameter.getType());
-    }
-
+public enum Operation {
+    LESS_THAN, LESS_THAN_OR_EQUALS, EQUALS, EQUALS_LOWER, GREATER_THAN, GREATER_THAN_OR_EQUALS,
+    CONTAINS, CONTAINS_LOWER, START_WITH, START_WITH_LOWER, END_WITH, END_WITH_LOWER, IN, IN_NOT,
+    NULLABLE, NOT_NULLABLE
 }

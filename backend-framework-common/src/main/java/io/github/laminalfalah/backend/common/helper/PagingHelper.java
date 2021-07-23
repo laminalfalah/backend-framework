@@ -22,8 +22,14 @@ package io.github.laminalfalah.backend.common.helper;
 
 import io.github.laminalfalah.backend.common.payload.request.Filter;
 import io.github.laminalfalah.backend.common.payload.response.Paging;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author laminalfalah on 06/07/21
@@ -53,6 +59,30 @@ public final class PagingHelper {
                 .params(filter.getParams())
                 .totalItems(totalSize)
                 .totalPages(totalPages)
+                .build();
+    }
+
+    public static <T extends Serializable> Pageable pageableOf(Filter<T> filter) {
+        List<Sort.Order> orders = new ArrayList<>();
+
+        filter.getSorts().forEach(v ->
+                orders.add(new Sort.Order(
+                        v.getDirection().name().equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC,
+                        v.getColumn()
+                ))
+        );
+
+        return PageRequest.of(filter.getPage().intValue() - 1, filter.getSize().intValue(), Sort.by(orders));
+    }
+
+    public static <T extends Serializable> Paging<T> toPaging(Filter<T> filter, Page<?> page) {
+        return Paging.<T>builder()
+                .page((long) page.getNumber() + 1)
+                .size((long) page.getSize())
+                .totalPages((long) page.getTotalPages())
+                .totalItems(page.getTotalElements())
+                .sorts(filter.getSorts())
+                .params(filter.getParams())
                 .build();
     }
 

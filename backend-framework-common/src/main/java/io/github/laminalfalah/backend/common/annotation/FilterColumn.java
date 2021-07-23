@@ -20,6 +20,9 @@ package io.github.laminalfalah.backend.common.annotation;
  * limitations under the License.
  */
 
+import io.github.laminalfalah.backend.common.filter.Operation;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -42,5 +45,8 @@ public @interface FilterColumn {
     String dateTimeFormat() default "yyyy-MM-dd HH:mm:ss";
 
     String timeFormat() default "HH:mm:ss";
+
+    @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+    Operation[] operations() default {Operation.EQUALS};
 
 }

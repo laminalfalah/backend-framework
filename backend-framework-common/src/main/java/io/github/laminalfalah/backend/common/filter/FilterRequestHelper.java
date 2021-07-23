@@ -29,6 +29,7 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -146,6 +147,16 @@ public class FilterRequestHelper {
         } catch (NumberFormatException e) {
             return defaultValue;
         }
+    }
+
+    public static <T extends Serializable> void addDefaultFilter(Filter<T> filter, String field) {
+        addDefaultFilter(filter, field, Direction.ASC);
+    }
+
+    public static <T extends Serializable> void addDefaultFilter(Filter<T> filter, String field, Direction direction) {
+        List<SortBy> sortByList = new ArrayList<>();
+        sortByList.add(new SortBy(field, direction));
+        filter.setSorts(sortByList);
     }
 
 }
