@@ -1,6 +1,7 @@
 # Backend Framework
 
 [![Build](https://github.com/laminalfalah/backend-framework/actions/workflows/github-actions.yml/badge.svg)](https://github.com/laminalfalah/backend-framework/actions/workflows/github-actions.yml)
+
 [![Sonarcloud Analyze](https://github.com/laminalfalah/backend-framework/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/laminalfalah/backend-framework/actions/workflows/sonarcloud.yml)
 
 Sebagai alat bantu untuk create new Spring Boot Project untuk kasus tersendiri.
@@ -39,7 +40,7 @@ or
 <dependecies>
     <dependency>
         <groupId>io.github.laminalfalah</groupId>
-        <artifactId>backend-framework-relative</artifactId>
+        <artifactId>backend-framework-reactive</artifactId>
         <version>${framework.version}</version>
     </dependency>
 </dependecies>
