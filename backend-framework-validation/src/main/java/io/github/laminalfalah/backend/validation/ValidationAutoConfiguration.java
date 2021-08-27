@@ -23,12 +23,8 @@ package io.github.laminalfalah.backend.validation;
 import io.github.laminalfalah.backend.validation.properties.EmailPatternProperties;
 import io.github.laminalfalah.backend.validation.properties.PasswordProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 /**
  * @author laminalfalah on 05/07/21
@@ -41,20 +37,5 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 })
 @PropertySource("classpath:validation.properties")
 public class ValidationAutoConfiguration {
-
-    @Bean
-    public MessageSource messageSource() {
-        var messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("classpath:i18n/messages");
-        messageSource.setDefaultEncoding("UTF-8");
-        return messageSource;
-    }
-
-    @Bean
-    public LocalValidatorFactoryBean getValidator() {
-        var bean = new LocalValidatorFactoryBean();
-        bean.setValidationMessageSource(messageSource());
-        return bean;
-    }
 
 }
