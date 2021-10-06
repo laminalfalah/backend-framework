@@ -25,11 +25,6 @@ public class ExampleErrorController implements ErrorController {
         return log;
     }
 
-    @Override
-    public ErrorHelper getErrorHelper() {
-        return new ErrorHelper(log);
-    }
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(TestingException.class)
     public ResponseEntity<Response<Object>> testingException(TestingException e) {

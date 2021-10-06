@@ -11,8 +11,8 @@ Sebagai alat bantu untuk create new Spring Boot Project untuk kasus tersendiri.
 * [Backend Framework MVC](backend-framework-mvc/README.md) : Configuration for Spring Boot MVC and Response Error
 * [Backend Framework Reactive](backend-framework-reactive/README.md) : Configuration for Spring Boot WebFlux and Response Error
 * [Backend Framework Swagger](backend-framework-swagger/README.md) : Configuration for Spring Fox Swagger
-* [Backend Framework Validation](backend-framework-validation/README.md) : Open Api Swagger
-* [Backend Framework Version](backend-framework-version/README.md) : Version Information
+* [Backend Framework Validation](backend-framework-validation/README.md) : Configuration Validation for Spring Boot
+* [Backend Framework Version](backend-framework-version/README.md) : Configuration Version Information
 
 Tidak semua package harus di implementation. Pilih beberapa packages saja. karena beberapa package sudah include dengan package lainnya.
 

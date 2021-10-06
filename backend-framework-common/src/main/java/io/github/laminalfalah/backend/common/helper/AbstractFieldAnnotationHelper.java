@@ -83,10 +83,10 @@ public abstract class AbstractFieldAnnotationHelper<A extends Annotation> {
         }
 
         @SneakyThrows
-        private static Method getMethod(Field field, String name) {
+        private static Method getMethod(Field field, MethodName name) {
             Method method;
             try {
-                if (name.contains("get")) {
+                if (name.name().equalsIgnoreCase("GET")) {
                     method = new PropertyDescriptor(field.getName(), field.getDeclaringClass()).getReadMethod();
                 } else {
                     method = new PropertyDescriptor(field.getName(), field.getDeclaringClass()).getWriteMethod();
@@ -100,7 +100,7 @@ public abstract class AbstractFieldAnnotationHelper<A extends Annotation> {
 
         protected static MethodHandle findGetter(Field field) {
             try {
-                var method = getMethod(field, "get");
+                var method = getMethod(field, MethodName.GET);
 
                 MethodHandle getter = method == null ? null : MethodHandles.lookup().unreflect(method);
 
@@ -125,7 +125,7 @@ public abstract class AbstractFieldAnnotationHelper<A extends Annotation> {
 
         protected static MethodHandle findSetter(Field field) {
             try {
-                var method = getMethod(field, "set");
+                var method = getMethod(field, MethodName.SET);
 
                 MethodHandle setter = method == null ? null : MethodHandles.lookup().unreflect(method);
 
@@ -148,4 +148,9 @@ public abstract class AbstractFieldAnnotationHelper<A extends Annotation> {
             }
         }
     }
+
+    private enum MethodName {
+        GET, SET
+    }
+
 }

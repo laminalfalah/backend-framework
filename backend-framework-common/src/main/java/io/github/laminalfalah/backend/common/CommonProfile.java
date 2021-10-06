@@ -28,7 +28,7 @@ public final class CommonProfile {
     public static final String DEVELOPMENT = "dev";
     public static final String PRODUCTION = "prod";
     public static final String TESTING = "testing";
-    public static final String STAGING = "stating";
+    public static final String STAGING = "staging";
     public static final String SWAGGER = "swagger";
     public static final String ACTUATOR = "actuator";
 
