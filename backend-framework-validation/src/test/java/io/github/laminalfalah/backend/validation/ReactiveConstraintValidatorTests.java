@@ -25,8 +25,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -47,12 +46,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = ReactiveConstraintValidatorTests.Application.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ReactiveConstraintValidatorTests {
 
     @Autowired
     private Validator validator;
 
     @Test
+    @Order(1)
     @DisplayName("Testing Validator Valid")
     void testValid() {
         ExampleRequest request = ExampleRequest.builder().name("Foo").build();
@@ -62,6 +63,7 @@ class ReactiveConstraintValidatorTests {
     }
 
     @Test
+    @Order(2)
     @DisplayName("Testing Validator Invalid")
     void testInvalid() {
         ExampleRequest request = ExampleRequest.builder().name("Bar").build();

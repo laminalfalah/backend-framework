@@ -29,8 +29,7 @@ import io.github.laminalfalah.backend.mvc.payload.ExampleResponse;
 import io.github.laminalfalah.backend.mvc.service.ExampleService;
 import lombok.AllArgsConstructor;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -58,12 +57,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = FilterControllerTests.Application.class)
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class FilterControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
+    @Order(1)
     @DisplayName("Testing Filter")
     void testingFilter() throws Exception {
         mockMvc.perform(get("/example").content(MediaType.APPLICATION_JSON_VALUE))
@@ -75,6 +76,7 @@ class FilterControllerTests {
     }
 
     @Test
+    @Order(2)
     @DisplayName("Testing Filter Parameter")
     void testingFilterParameter() throws Exception {
         mockMvc.perform(get("/example").param("name", "a").content(MediaType.APPLICATION_JSON_VALUE))
@@ -83,6 +85,7 @@ class FilterControllerTests {
     }
 
     @Test
+    @Order(3)
     @DisplayName("Testing Filter Parameter Page, Size")
     void testingFilterParameterPageSize() throws Exception {
         mockMvc.perform(get("/example").param("page", "1").param("size", "50").content(MediaType.APPLICATION_JSON_VALUE))

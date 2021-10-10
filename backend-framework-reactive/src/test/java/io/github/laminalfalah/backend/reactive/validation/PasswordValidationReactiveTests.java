@@ -23,9 +23,7 @@ package io.github.laminalfalah.backend.reactive.validation;
 import io.github.laminalfalah.backend.reactive.annotation.PasswordValidationReactive;
 import lombok.Builder;
 import lombok.Data;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -45,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PasswordValidationReactiveTests {
 
     @Autowired

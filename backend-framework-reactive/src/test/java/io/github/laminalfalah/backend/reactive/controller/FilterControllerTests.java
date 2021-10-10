@@ -28,8 +28,7 @@ import io.github.laminalfalah.backend.reactive.payload.ExampleFilter;
 import io.github.laminalfalah.backend.reactive.payload.ExampleResponse;
 import io.github.laminalfalah.backend.reactive.service.ExampleService;
 import lombok.AllArgsConstructor;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -53,12 +52,14 @@ import java.util.List;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = FilterControllerTests.Application.class)
 @AutoConfigureWebTestClient
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class FilterControllerTests {
 
     @Autowired
     private WebTestClient webTestClient;
 
     @Test
+    @Order(1)
     @DisplayName("Testing Filter")
     void testingFilter() {
         webTestClient.get().uri("/example")
@@ -72,6 +73,7 @@ class FilterControllerTests {
     }
 
     @Test
+    @Order(2)
     @DisplayName("Testing Filter Parameter")
     void testingFilterParameter() {
         webTestClient.get().uri(uri -> uri.path("/example").queryParam("name", "a").build())
@@ -82,6 +84,7 @@ class FilterControllerTests {
     }
 
     @Test
+    @Order(3)
     @DisplayName("Testing Filter Parameter Page, Size")
     void testingFilterParameterPageSize() {
         webTestClient.get().uri(uri -> uri.path("/example").queryParam("page", 1).queryParam("size", 50).build())

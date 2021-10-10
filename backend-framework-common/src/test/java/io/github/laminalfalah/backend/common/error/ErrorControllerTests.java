@@ -25,9 +25,7 @@ import io.github.laminalfalah.backend.common.exception.DataNotFoundException;
 import io.github.laminalfalah.backend.common.exception.UnauthorizedException;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.springframework.beans.InvalidPropertyException;
@@ -70,6 +68,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = ErrorControllerTests.Application.ExampleController.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ErrorControllerTests {
 
     @Autowired
