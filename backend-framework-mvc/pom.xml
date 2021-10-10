@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.github.laminalfalah</groupId>
         <artifactId>backend-framework</artifactId>
-        <version>0.0.3</version>
+        <version>0.0.4</version>
     </parent>
 
     <artifactId>backend-framework-mvc</artifactId>
@@ -20,6 +20,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -41,6 +45,11 @@
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-new-relic</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -54,6 +63,12 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>${spring-doc.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.experimental</groupId>
+            <artifactId>spring-native</artifactId>
+            <version>${spring-native.version}</version>
         </dependency>
 
         <dependency>

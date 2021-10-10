@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.github.laminalfalah</groupId>
         <artifactId>backend-framework</artifactId>
-        <version>0.0.3</version>
+        <version>0.0.4</version>
     </parent>
 
     <artifactId>backend-framework-swagger</artifactId>
@@ -22,6 +22,23 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-common</artifactId>
             <version>${spring-doc.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${spring-doc.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
