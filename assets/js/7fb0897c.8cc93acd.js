@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs_backend_framework=self.webpackChunkdocs_backend_framework||[]).push([[185],{6539:function(e){e.exports=JSON.parse('{"allTagsPath":"/backend-framework/blog/tags","slug":"/backend-framework/blog/tags/hello","name":"hello","count":2,"permalink":"/backend-framework/blog/tags/hello"}')}}]);

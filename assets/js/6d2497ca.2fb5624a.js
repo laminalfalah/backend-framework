@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs_backend_framework=self.webpackChunkdocs_backend_framework||[]).push([[221],{4871:function(e){e.exports=JSON.parse('{"permalink":"/backend-framework/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":4,"previousPage":null,"nextPage":null,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);
