@@ -20,6 +20,7 @@ package io.github.laminalfalah.backend.mvc;
  * limitations under the License.
  */
 
+import io.github.laminalfalah.backend.mvc.interceptor.AuthenticationInterceptor;
 import io.github.laminalfalah.backend.common.properties.PagingProperties;
 import io.github.laminalfalah.backend.mvc.filter.FilterRequestArgumentResolver;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
@@ -49,6 +51,8 @@ import java.util.List;
 public class MvcWebAutoConfiguration implements WebMvcConfigurer {
 
     private final PagingProperties properties;
+
+    private final AuthenticationInterceptor interceptor;
 
     @Bean
     public MessageSource messageSource() {
@@ -70,4 +74,8 @@ public class MvcWebAutoConfiguration implements WebMvcConfigurer {
         resolvers.add(new FilterRequestArgumentResolver(properties));
     }
 
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(interceptor);
+    }
 }

@@ -37,9 +37,9 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:mvc.properties")
 @AutoConfigureAfter(CommonAutoConfiguration.class)
 @ComponentScan(basePackageClasses = {
-        MvcErrorController.class,
-        VersionController.class,
-        ErrorAttribute.class
+    MvcErrorController.class,
+    VersionController.class,
+    ErrorAttribute.class,
 })
 public class MvcAutoConfiguration {
 
