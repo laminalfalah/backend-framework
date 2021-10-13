@@ -31,6 +31,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -52,8 +53,9 @@ class VersionControllerTests {
     @DisplayName("Testing Version")
     void testingVersion() throws Exception {
         MvcResult result = mockMvc.perform(get("/version"))
-                .andExpect(status().isOk())
-                .andReturn();
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().isOk())
+            .andReturn();
 
         String response = result.getResponse().getContentAsString();
         assertTrue(response.contains("maven.groupId="));

@@ -20,6 +20,10 @@ package io.github.laminalfalah.backend.mvc.controller;
  * limitations under the License.
  */
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import io.github.laminalfalah.backend.common.helper.PagingHelper;
 import io.github.laminalfalah.backend.common.helper.ResponseHelper;
 import io.github.laminalfalah.backend.common.payload.request.Filter;
@@ -27,9 +31,14 @@ import io.github.laminalfalah.backend.common.payload.response.Paging;
 import io.github.laminalfalah.backend.mvc.payload.ExampleFilter;
 import io.github.laminalfalah.backend.mvc.payload.ExampleResponse;
 import io.github.laminalfalah.backend.mvc.service.ExampleService;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -40,15 +49,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author laminalfalah on 20/07/21
@@ -68,30 +72,42 @@ class FilterControllerTests {
     @DisplayName("Testing Filter")
     void testingFilter() throws Exception {
         mockMvc.perform(get("/example").content(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.paging.page", Matchers.is(1)))
-                .andExpect(jsonPath("$.paging.size", Matchers.is(1000)))
-                .andExpect(jsonPath("$.paging.totalItems", Matchers.is(26)))
-                .andExpect(jsonPath("$.data[0].name", Matchers.is("A")));
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.paging.page", Matchers.is(1)))
+            .andExpect(jsonPath("$.paging.size", Matchers.is(1000)))
+            .andExpect(jsonPath("$.paging.totalItems", Matchers.is(26)))
+            .andExpect(jsonPath("$.paging.sorts[0].column", Matchers.is("createdAt")))
+            .andExpect(jsonPath("$.paging.sorts[0].direction", Matchers.is("DESC")))
+            .andExpect(jsonPath("$.data[0].name", Matchers.is("A")));
     }
 
     @Test
     @Order(2)
     @DisplayName("Testing Filter Parameter")
     void testingFilterParameter() throws Exception {
-        mockMvc.perform(get("/example").param("name", "a").content(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[0].name", Matchers.is("A")));
+        mockMvc.perform(get("/example")
+                .param("name", "a")
+                .content(MediaType.APPLICATION_JSON_VALUE)
+            )
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data[0].name", Matchers.is("A")));
     }
 
     @Test
     @Order(3)
     @DisplayName("Testing Filter Parameter Page, Size")
     void testingFilterParameterPageSize() throws Exception {
-        mockMvc.perform(get("/example").param("page", "1").param("size", "50").content(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.paging.page", Matchers.is(1)))
-                .andExpect(jsonPath("$.paging.size", Matchers.is(50)));
+        mockMvc.perform(get("/example")
+                .param("page", "1")
+                .param("size", "50")
+                .content(MediaType.APPLICATION_JSON_VALUE)
+            )
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.paging.page", Matchers.is(1)))
+            .andExpect(jsonPath("$.paging.size", Matchers.is(50)));
     }
 
     @SpringBootApplication
