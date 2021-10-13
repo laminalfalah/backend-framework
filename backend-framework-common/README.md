@@ -5,6 +5,21 @@ For Paging, we can use `Filter` class for web request, and `Filter` class for we
 We also already implement `FilterArgumentResolver` to support argument injection on controller,
 so we don't need to parse paging request manually.
 
+```java
+@RestController
+@RequestMapping(path = "/example", produces = MediaType.APPLICATION_JSON_VALUE)
+@AllArgsConstructor
+public class ExampleController {
+    
+    private final ExampleService service;
+    
+    @GetMapping
+    public ResponseEntity<?> index(Filter<ExampleFilter> filter) {
+        return ResponseEntity.ok(ResponseHelper.ok(service.index(filter)));
+    }
+}
+```
+
 In the url we can use standard paging :
 
 ```
@@ -23,6 +38,7 @@ GET /api/users?page=2&sort_by=id:asc,first_name:asc,created_at:desc
 GET /api/users?page=2&sort_by=id,first_name,created_at:desc
 ```
 
+In the `properties` you can add default for paging field
 ```properties
 backend.paging.default-field=createdAt
 backend.paging.default-field-direction=desc
