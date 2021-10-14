@@ -26,9 +26,6 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.List;
-import java.util.function.Function;
-import javax.annotation.Resource;
 
 /**
  * @author laminalfalah on 12/10/21
