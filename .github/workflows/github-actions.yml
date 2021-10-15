@@ -51,15 +51,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           architecture: x64
-          server-id: deploy-github
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
-          gpg-private-key: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
-          gpg-passphrase: GPG_PASSPHRASE
-        env:
-          MAVEN_USERNAME: ${{ secrets.BACKEND_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.BACKEND_TOKEN }}
-          GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
+          cache: 'maven'
       - name: Publish to GitHub Packages
         run: |
           mvn --batch-mode --no-transfer-progress -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} deploy -P deploy-github -DskipTests
