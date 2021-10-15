@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  io.github.laminalfalah.backend.metric.BackendMetricsEndpointAutoConfiguration,\
+  io.github.laminalfalah.backend.metric.info.BackendInfoContributorAutoConfiguration
