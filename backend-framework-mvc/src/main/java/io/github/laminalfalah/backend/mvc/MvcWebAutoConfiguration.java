@@ -20,6 +20,8 @@ package io.github.laminalfalah.backend.mvc;
  * limitations under the License.
  */
 
+import io.github.laminalfalah.backend.common.filter.ContractFilterMapper;
+import io.github.laminalfalah.backend.mvc.filter.FilterMapper;
 import io.github.laminalfalah.backend.mvc.interceptor.AuthenticationInterceptor;
 import io.github.laminalfalah.backend.common.properties.PagingProperties;
 import io.github.laminalfalah.backend.mvc.filter.FilterRequestArgumentResolver;
@@ -33,6 +35,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -55,6 +58,11 @@ public class MvcWebAutoConfiguration implements WebMvcConfigurer {
     private final AuthenticationInterceptor interceptor;
 
     @Bean
+    public ContractFilterMapper<NativeWebRequest> getFilterMapper() {
+        return new FilterMapper(properties);
+    }
+
+    @Bean
     public MessageSource messageSource() {
         var messageSource = new ReloadableResourceBundleMessageSource();
         messageSource.setBasename("classpath:i18n/messages");
@@ -71,7 +79,7 @@ public class MvcWebAutoConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new FilterRequestArgumentResolver(properties));
+        resolvers.add(new FilterRequestArgumentResolver(getFilterMapper()));
     }
 
     @Override

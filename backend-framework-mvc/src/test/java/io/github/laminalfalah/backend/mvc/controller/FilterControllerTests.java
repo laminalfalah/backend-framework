@@ -92,6 +92,7 @@ class FilterControllerTests {
             )
             .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk())
+            .andExpect(jsonPath("$.paging.params.name", Matchers.is("a")))
             .andExpect(jsonPath("$.data[0].name", Matchers.is("A")));
     }
 

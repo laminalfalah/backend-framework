@@ -63,13 +63,15 @@ class FilterControllerTests {
     @DisplayName("Testing Filter")
     void testingFilter() {
         webTestClient.get().uri("/example")
-                .exchange()
-                .expectStatus().is2xxSuccessful()
-                .expectBody()
-                .jsonPath("$.paging.page").isEqualTo(1)
-                .jsonPath("$.paging.size").isEqualTo(1000)
-                .jsonPath("$.paging.totalItems").isEqualTo(26)
-                .jsonPath("$.data.[0].name").isEqualTo("A");
+            .exchange()
+            .expectStatus().is2xxSuccessful()
+            .expectBody()
+            .jsonPath("$.paging.page").isEqualTo(1)
+            .jsonPath("$.paging.size").isEqualTo(1000)
+            .jsonPath("$.paging.totalItems").isEqualTo(26)
+            .jsonPath("$.paging.sorts[0].column").isEqualTo("createdAt")
+            .jsonPath("$.paging.sorts[0].direction").isEqualTo("DESC")
+            .jsonPath("$.data.[0].name").isEqualTo("A");
     }
 
     @Test
@@ -77,10 +79,11 @@ class FilterControllerTests {
     @DisplayName("Testing Filter Parameter")
     void testingFilterParameter() {
         webTestClient.get().uri(uri -> uri.path("/example").queryParam("name", "a").build())
-                .exchange()
-                .expectStatus().is2xxSuccessful()
-                .expectBody()
-                .jsonPath("$.data[0].name").isEqualTo("A");
+            .exchange()
+            .expectStatus().is2xxSuccessful()
+            .expectBody()
+            .jsonPath("$.paging.params.name").isEqualTo("a")
+            .jsonPath("$.data[0].name").isEqualTo("A");
     }
 
     @Test
@@ -88,11 +91,11 @@ class FilterControllerTests {
     @DisplayName("Testing Filter Parameter Page, Size")
     void testingFilterParameterPageSize() {
         webTestClient.get().uri(uri -> uri.path("/example").queryParam("page", 1).queryParam("size", 50).build())
-                .exchange()
-                .expectStatus().is2xxSuccessful()
-                .expectBody()
-                .jsonPath("$.paging.page").isEqualTo(1)
-                .jsonPath("$.paging.size").isEqualTo(50);
+            .exchange()
+            .expectStatus().is2xxSuccessful()
+            .expectBody()
+            .jsonPath("$.paging.page").isEqualTo(1)
+            .jsonPath("$.paging.size").isEqualTo(50);
     }
 
     @SpringBootApplication

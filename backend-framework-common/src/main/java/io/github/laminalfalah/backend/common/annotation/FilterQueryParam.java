@@ -1,9 +1,9 @@
-package io.github.laminalfalah.backend.common.payload.request;
+package io.github.laminalfalah.backend.common.annotation;
 
 /*
  * Copyright (C) 2021 the original author laminalfalah All Right Reserved.
  *
- * io.github.laminalfalah.backend.common.payload.request
+ * io.github.laminalfalah.backend.common.annotation
  *
  * This is part of the backend-framework.
  *
@@ -20,32 +20,21 @@ package io.github.laminalfalah.backend.common.payload.request;
  * limitations under the License.
  */
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
-
-import java.io.Serializable;
-import java.util.List;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * @author laminalfalah on 06/07/21
+ * @author laminalfalah on 15/10/21
  */
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class Filter<T> implements Serializable {
-
-    @JsonProperty("page")
-    private Long page;
-
-    @JsonProperty("size")
-    private Long size;
-
-    @JsonProperty("sort")
-    private List<SortBy> sorts;
-
-    @JsonProperty("params")
-    private T params;
+@Inherited
+@Documented
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface FilterQueryParam {
 
 }

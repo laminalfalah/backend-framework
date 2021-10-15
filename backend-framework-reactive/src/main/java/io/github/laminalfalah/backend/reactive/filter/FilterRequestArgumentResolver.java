@@ -20,18 +20,16 @@ package io.github.laminalfalah.backend.reactive.filter;
  * limitations under the License.
  */
 
-import io.github.laminalfalah.backend.common.filter.FilterHelper;
+import io.github.laminalfalah.backend.common.filter.ContractFilterMapper;
 import io.github.laminalfalah.backend.common.payload.request.Filter;
-import io.github.laminalfalah.backend.common.properties.PagingProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.reactive.BindingContext;
 import org.springframework.web.reactive.result.method.HandlerMethodArgumentResolver;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-
-import static io.github.laminalfalah.backend.reactive.filter.FilterMapper.fromServerHttpRequest;
 
 /**
  * @author laminalfalah on 07/07/21
@@ -41,7 +39,7 @@ import static io.github.laminalfalah.backend.reactive.filter.FilterMapper.fromSe
 @AllArgsConstructor
 public class FilterRequestArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final PagingProperties properties;
+    private final ContractFilterMapper<ServerHttpRequest> mapper;
 
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
@@ -50,8 +48,7 @@ public class FilterRequestArgumentResolver implements HandlerMethodArgumentResol
 
     @Override
     public Mono<Object> resolveArgument(MethodParameter methodParameter, BindingContext bindingContext, ServerWebExchange serverWebExchange) {
-        FilterHelper.setGenericPackageName(methodParameter);
-        return Mono.fromCallable(() -> fromServerHttpRequest(log, serverWebExchange.getRequest(), properties));
+        return Mono.fromCallable(() -> mapper.fromServerHttpRequest(methodParameter, log, serverWebExchange.getRequest()));
     }
 
 }

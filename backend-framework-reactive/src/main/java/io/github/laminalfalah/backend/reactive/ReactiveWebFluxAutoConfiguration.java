@@ -20,7 +20,9 @@ package io.github.laminalfalah.backend.reactive;
  * limitations under the License.
  */
 
+import io.github.laminalfalah.backend.common.filter.ContractFilterMapper;
 import io.github.laminalfalah.backend.common.properties.PagingProperties;
+import io.github.laminalfalah.backend.reactive.filter.FilterMapper;
 import io.github.laminalfalah.backend.reactive.filter.FilterRequestArgumentResolver;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -30,6 +32,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 import org.springframework.web.reactive.result.method.annotation.ArgumentResolverConfigurer;
@@ -46,6 +49,11 @@ import org.springframework.web.reactive.result.method.annotation.ArgumentResolve
 public class ReactiveWebFluxAutoConfiguration implements WebFluxConfigurer {
 
     private final PagingProperties properties;
+
+    @Bean
+    public ContractFilterMapper<ServerHttpRequest> getFilterMapper() {
+        return new FilterMapper(properties);
+    }
 
     @Bean
     public MessageSource messageSource() {
@@ -65,7 +73,7 @@ public class ReactiveWebFluxAutoConfiguration implements WebFluxConfigurer {
 
     @Override
     public void configureArgumentResolvers(ArgumentResolverConfigurer configurer) {
-        configurer.addCustomResolver(new FilterRequestArgumentResolver(properties));
+        configurer.addCustomResolver(new FilterRequestArgumentResolver(getFilterMapper()));
     }
 
 }

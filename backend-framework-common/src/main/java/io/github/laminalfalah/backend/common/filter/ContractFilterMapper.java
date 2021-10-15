@@ -1,9 +1,9 @@
-package io.github.laminalfalah.backend.common.payload.request;
+package io.github.laminalfalah.backend.common.filter;
 
 /*
  * Copyright (C) 2021 the original author laminalfalah All Right Reserved.
  *
- * io.github.laminalfalah.backend.common.payload.request
+ * io.github.laminalfalah.backend.common.filter
  *
  * This is part of the backend-framework.
  *
@@ -20,32 +20,16 @@ package io.github.laminalfalah.backend.common.payload.request;
  * limitations under the License.
  */
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
-
-import java.io.Serializable;
-import java.util.List;
+import io.github.laminalfalah.backend.common.payload.request.Filter;
+import org.slf4j.Logger;
+import org.springframework.core.MethodParameter;
 
 /**
- * @author laminalfalah on 06/07/21
+ * @author laminalfalah on 15/10/21
  */
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class Filter<T> implements Serializable {
+public interface ContractFilterMapper<T> {
 
-    @JsonProperty("page")
-    private Long page;
-
-    @JsonProperty("size")
-    private Long size;
-
-    @JsonProperty("sort")
-    private List<SortBy> sorts;
-
-    @JsonProperty("params")
-    private T params;
+    Filter<?> fromServerHttpRequest(MethodParameter parameter, Logger logger, T exchange);
 
 }

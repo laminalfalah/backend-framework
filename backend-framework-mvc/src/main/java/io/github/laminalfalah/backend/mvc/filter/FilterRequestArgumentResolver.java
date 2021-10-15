@@ -20,9 +20,8 @@ package io.github.laminalfalah.backend.mvc.filter;
  * limitations under the License.
  */
 
-import io.github.laminalfalah.backend.common.filter.FilterHelper;
+import io.github.laminalfalah.backend.common.filter.ContractFilterMapper;
 import io.github.laminalfalah.backend.common.payload.request.Filter;
-import io.github.laminalfalah.backend.common.properties.PagingProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -30,8 +29,6 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-
-import static io.github.laminalfalah.backend.mvc.filter.FilterMapper.fromServerHttpRequest;
 
 /**
  * @author laminalfalah on 07/07/21
@@ -41,7 +38,7 @@ import static io.github.laminalfalah.backend.mvc.filter.FilterMapper.fromServerH
 @AllArgsConstructor
 public class FilterRequestArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final PagingProperties properties;
+    private final ContractFilterMapper<NativeWebRequest> mapper;
 
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
@@ -52,8 +49,7 @@ public class FilterRequestArgumentResolver implements HandlerMethodArgumentResol
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer,
                                   NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory
     ) {
-        FilterHelper.setGenericPackageName(methodParameter);
-        return fromServerHttpRequest(log, nativeWebRequest, properties);
+        return mapper.fromServerHttpRequest(methodParameter, log, nativeWebRequest);
     }
 
 }

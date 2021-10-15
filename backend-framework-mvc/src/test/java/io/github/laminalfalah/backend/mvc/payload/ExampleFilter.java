@@ -20,6 +20,7 @@ package io.github.laminalfalah.backend.mvc.payload;
  * limitations under the License.
  */
 
+import io.github.laminalfalah.backend.common.annotation.FilterQueryParam;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,6 +34,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@FilterQueryParam
 public class ExampleFilter implements Serializable {
 
     private String name;

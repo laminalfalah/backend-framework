@@ -20,24 +20,31 @@ package io.github.laminalfalah.backend.common.filter;
  * limitations under the License.
  */
 
+import static io.github.laminalfalah.backend.common.filter.FilterHelper.defaultValue;
+import static io.github.laminalfalah.backend.common.filter.FilterHelper.defaultValueBoolean;
+import static io.github.laminalfalah.backend.common.filter.FilterHelper.defaultValueDate;
+import static io.github.laminalfalah.backend.common.filter.FilterHelper.defaultValueDateTime;
+import static io.github.laminalfalah.backend.common.filter.FilterHelper.defaultValueTime;
+
 import io.github.laminalfalah.backend.common.payload.request.Direction;
 import io.github.laminalfalah.backend.common.payload.request.Filter;
 import io.github.laminalfalah.backend.common.payload.request.SortBy;
 import io.github.laminalfalah.backend.common.properties.PagingProperties;
-import lombok.SneakyThrows;
-import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
-
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static io.github.laminalfalah.backend.common.filter.FilterHelper.*;
+import lombok.SneakyThrows;
+import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * @author laminalfalah on 07/07/21
@@ -149,11 +156,11 @@ public class FilterRequestHelper {
         }
     }
 
-    public static <T extends Serializable> void addDefaultFilter(Filter<T> filter, String field) {
+    public static <T> void addDefaultFilter(Filter<T> filter, String field) {
         addDefaultFilter(filter, field, Direction.ASC);
     }
 
-    public static <T extends Serializable> void addDefaultFilter(Filter<T> filter, String field, Direction direction) {
+    public static <T> void addDefaultFilter(Filter<T> filter, String field, Direction direction) {
         List<SortBy> sortByList = new ArrayList<>();
         sortByList.add(new SortBy(field, direction));
         filter.setSorts(sortByList);

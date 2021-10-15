@@ -23,21 +23,20 @@ package io.github.laminalfalah.backend.common.filter;
 import io.github.laminalfalah.backend.common.annotation.FilterColumn;
 import io.github.laminalfalah.backend.common.payload.request.Filter;
 import io.github.laminalfalah.backend.common.properties.PagingProperties;
+import java.lang.reflect.ParameterizedType;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.core.MethodParameter;
 
 import java.util.Map;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 
 /**
  * @author laminalfalah on 07/07/21
  */
 
 public final class FilterHelper {
-
-    private static String genericPackageName;
 
     private FilterHelper() {
         throw new UnsupportedOperationException();
@@ -47,23 +46,11 @@ public final class FilterHelper {
         return (String) params.get(field.getFilterParameterName(column));
     }
 
-    public static String getGenericPackageName() {
-        return genericPackageName;
-    }
-
-    public static void setGenericPackageName(MethodParameter parameter) {
-        var type = parameter.getGenericParameterType().getTypeName();
-
-        if (type.contains("?")) {
-            genericPackageName = null;
-        } else {
-            var pattern = Pattern.compile(".+?(?=<)", Pattern.MULTILINE);
-            var matcher = pattern.matcher(type);
-
-            genericPackageName = matcher.replaceAll("")
-                    .replace("<", "")
-                    .replace(">", "");
-        }
+    @SneakyThrows
+    public static Class<?> genericClassName(MethodParameter methodParameter) {
+        var type = ((ParameterizedType) methodParameter.getGenericParameterType()).getActualTypeArguments()[0];
+        var className = type.getTypeName();
+        return Class.forName(className);
     }
 
     public static boolean excludeDefaultPaging(String key, PagingProperties pagingProperties) {
@@ -72,15 +59,15 @@ public final class FilterHelper {
                 !key.equalsIgnoreCase(pagingProperties.getQuery().getSortKey());
     }
 
-    protected static String defaultValue(String value, FilterField filterField, Filter<?> filter) {
+    public static String defaultValue(String value, FilterField filterField, Filter<?> filter) {
         return value != null && !StringUtils.isEmpty(value.trim()) ? value : defaultValueGetter(filterField, filter);
     }
 
-    protected static <T> T defaultValue(String value, FilterField filterField, Filter<?> filter, Function<String, T> func) {
+    public static <T> T defaultValue(String value, FilterField filterField, Filter<?> filter, Function<String, T> func) {
         return value == null ? defaultValueGetter(filterField, filter) : func.apply(validateNumberNotNull(value));
     }
 
-    protected static Boolean defaultValueBoolean(String value) {
+    public static Boolean defaultValueBoolean(String value) {
         if (value != null && !StringUtils.isEmpty(value)) {
             return value.equalsIgnoreCase("true") || value.equalsIgnoreCase("1");
         } else {
@@ -88,15 +75,15 @@ public final class FilterHelper {
         }
     }
 
-    protected static String defaultValueDate(String value) {
+    public static String defaultValueDate(String value) {
         return value != null && !StringUtils.isEmpty(value.trim()) ? value : "0000-00-00";
     }
 
-    protected static String defaultValueDateTime(String value) {
+    public static String defaultValueDateTime(String value) {
         return value != null && !StringUtils.isEmpty(value.trim()) ? value : "0000-00-00 00:00:00";
     }
 
-    protected static String defaultValueTime(String value) {
+    public static String defaultValueTime(String value) {
         return value != null && !StringUtils.isEmpty(value.trim()) ? value : "00:00:00";
     }
 

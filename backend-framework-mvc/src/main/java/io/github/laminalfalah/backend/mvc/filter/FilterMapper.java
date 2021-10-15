@@ -20,35 +20,40 @@ package io.github.laminalfalah.backend.mvc.filter;
  * limitations under the License.
  */
 
+import static io.github.laminalfalah.backend.common.filter.FilterHelper.excludeDefaultPaging;
+import static io.github.laminalfalah.backend.common.filter.FilterHelper.genericClassName;
+import static io.github.laminalfalah.backend.common.filter.FilterHelper.valueOf;
+import static io.github.laminalfalah.backend.common.filter.FilterRequestHelper.addDefaultFilter;
+import static io.github.laminalfalah.backend.common.filter.FilterRequestHelper.getLong;
+import static io.github.laminalfalah.backend.common.filter.FilterRequestHelper.getSortByList;
+import static io.github.laminalfalah.backend.common.filter.FilterRequestHelper.setValueString;
+
 import io.github.laminalfalah.backend.common.annotation.FilterColumn;
+import io.github.laminalfalah.backend.common.annotation.FilterQueryParam;
+import io.github.laminalfalah.backend.common.filter.ContractFilterMapper;
 import io.github.laminalfalah.backend.common.filter.FilterField;
-import io.github.laminalfalah.backend.common.filter.FilterHelper;
 import io.github.laminalfalah.backend.common.payload.request.Filter;
 import io.github.laminalfalah.backend.common.properties.PagingProperties;
-import lombok.SneakyThrows;
-import org.slf4j.Logger;
-import org.springframework.web.context.request.NativeWebRequest;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static io.github.laminalfalah.backend.common.filter.FilterHelper.excludeDefaultPaging;
-import static io.github.laminalfalah.backend.common.filter.FilterHelper.getGenericPackageName;
-import static io.github.laminalfalah.backend.common.filter.FilterRequestHelper.*;
+import javax.servlet.http.HttpServletRequest;
+import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import org.slf4j.Logger;
+import org.springframework.core.MethodParameter;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.web.context.request.NativeWebRequest;
 
 /**
  * @author laminalfalah on 08/07/21
  */
 
-public class FilterMapper {
+@AllArgsConstructor
+public class FilterMapper implements ContractFilterMapper<NativeWebRequest> {
 
-    private FilterMapper() {
-        throw new UnsupportedOperationException();
-    }
+    private final PagingProperties properties;
 
-    private static Map<String, Object> properties(HttpServletRequest request, PagingProperties properties) {
+    private Map<String, Object> properties(HttpServletRequest request, PagingProperties properties) {
         Map<String, Object> params = new ConcurrentHashMap<>();
 
         request.getParameterMap().forEach((k ,v) -> {
@@ -60,21 +65,39 @@ public class FilterMapper {
         return params;
     }
 
-    protected static <T extends Serializable> Filter<T> fromServerHttpRequest(Logger log, NativeWebRequest nativeWebRequest, PagingProperties properties) {
-        HttpServletRequest request = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
+    @Override
+    @SneakyThrows
+    public Filter<?> fromServerHttpRequest(MethodParameter parameter, Logger logger, NativeWebRequest exchange) {
+        var request = exchange.getNativeRequest(HttpServletRequest.class);
 
-        Filter<T> filter = assign(request, properties);
+        var clazz = genericClassName(parameter);
 
-        assert request != null;
+        var filter = new Filter<>();
 
+        filter.setParams(clazz.getConstructor().newInstance());
+
+        if (request != null) {
+            setFilterParams(filter, request);
+
+            defaultFilter(filter, request);
+
+            if (properties.getLog() != null && properties.getLog()) {
+                logger.info("{}", filter);
+            }
+        }
+
+        return filter;
+    }
+
+    private void defaultFilter(Filter<?> filter, HttpServletRequest request) {
         filter.setPage(getLong(
-                request.getParameter(properties.getQuery().getPageKey()),
-                properties.getDefaultPage()
+            request.getParameter(properties.getQuery().getPageKey()),
+            properties.getDefaultPage()
         ));
 
         filter.setSize(getLong(
-                request.getParameter(properties.getQuery().getSizeKey()),
-                properties.getDefaultSize()
+            request.getParameter(properties.getQuery().getSizeKey()),
+            properties.getDefaultSize()
         ));
 
         if (filter.getSize() > properties.getMaxSizePerPage()) {
@@ -82,8 +105,8 @@ public class FilterMapper {
         }
 
         filter.setSorts(getSortByList(
-                request.getParameter(properties.getQuery().getSortKey()),
-                properties
+            request.getParameter(properties.getQuery().getSortKey()),
+            properties
         ));
 
         if (properties.getDefaultField() != null ||
@@ -91,36 +114,26 @@ public class FilterMapper {
         ) {
             addDefaultFilter(filter, properties.getDefaultField(), properties.getDefaultFieldDirection());
         }
-
-        if (properties.getLog() != null && properties.getLog()) {
-            log.info("{}", filter);
-        }
-        return filter;
     }
 
-    @SneakyThrows
-    @SuppressWarnings("unchecked")
-    private static <T extends Serializable> Filter<T> assign(HttpServletRequest request, PagingProperties properties) {
-        var packageName = getGenericPackageName();
-        var aClass = packageName == null ? null : (Class<T>) Class.forName(packageName);
+    private void setFilterParams(Filter<?> filter, HttpServletRequest request) {
+        var validFilter = AnnotationUtils.findAnnotation(filter.getParams().getClass(), FilterQueryParam.class);
 
-        if (aClass == null) return new Filter<>();
+        if (validFilter != null) {
+            for (var field: filter.getParams().getClass().getDeclaredFields()) {
+                var column = field.getAnnotation(FilterColumn.class);
 
-        var filter = new Filter<>(aClass);
+                var filterField = FilterField.builder().field(field).filterColumn(column).build();
 
-        var params = properties(request, properties);
+                var type = filterField.getFieldType();
 
-        for (var field: filter.getParams().getClass().getDeclaredFields()) {
-            var column = field.getAnnotation(FilterColumn.class);
-
-            var filterField = FilterField.builder().field(field).filterColumn(column).build();
-
-            var type = filterField.getFieldType();
-
-            setValueString(type, filter, filterField, FilterHelper.valueOf(params, filterField, column));
+                setValueString(type, filter, filterField, setValueOf(request, filterField, column));
+            }
         }
+    }
 
-        return filter;
+    private String setValueOf(HttpServletRequest request, FilterField filterField, FilterColumn column) {
+        return valueOf(properties(request, properties), filterField, column);
     }
 
 }
