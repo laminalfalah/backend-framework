@@ -41,7 +41,7 @@ import java.util.concurrent.Executor;
  * @author laminalfalah on 08/07/21
  */
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass({
         TaskExecutionAutoConfiguration.class,
         TaskSchedulingAutoConfiguration.class
