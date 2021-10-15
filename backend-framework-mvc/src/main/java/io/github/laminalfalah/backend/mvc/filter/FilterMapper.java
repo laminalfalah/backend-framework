@@ -67,7 +67,7 @@ public class FilterMapper implements ContractFilterMapper<NativeWebRequest> {
 
     @Override
     @SneakyThrows
-    public Filter<?> fromServerHttpRequest(MethodParameter parameter, Logger logger, NativeWebRequest exchange) {
+    public Filter<Object> fromServerHttpRequest(MethodParameter parameter, Logger logger, NativeWebRequest exchange) {
         var request = exchange.getNativeRequest(HttpServletRequest.class);
 
         var clazz = genericClassName(parameter);

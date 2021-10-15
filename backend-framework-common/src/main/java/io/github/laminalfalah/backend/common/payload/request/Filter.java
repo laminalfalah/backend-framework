@@ -46,6 +46,6 @@ public class Filter<T> implements Serializable {
     private List<SortBy> sorts;
 
     @JsonProperty("params")
-    private T params;
+    private transient T params;
 
 }

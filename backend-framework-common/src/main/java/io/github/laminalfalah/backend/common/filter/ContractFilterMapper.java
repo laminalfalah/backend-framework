@@ -30,6 +30,6 @@ import org.springframework.core.MethodParameter;
 
 public interface ContractFilterMapper<T> {
 
-    Filter<?> fromServerHttpRequest(MethodParameter parameter, Logger logger, T exchange);
+    Filter<Object> fromServerHttpRequest(MethodParameter parameter, Logger logger, T exchange);
 
 }

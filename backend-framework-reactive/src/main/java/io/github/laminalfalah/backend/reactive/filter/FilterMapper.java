@@ -66,7 +66,7 @@ public class FilterMapper implements ContractFilterMapper<ServerHttpRequest> {
 
     @Override
     @SneakyThrows
-    public Filter<?> fromServerHttpRequest(MethodParameter parameter, Logger logger, ServerHttpRequest exchange) {
+    public Filter<Object> fromServerHttpRequest(MethodParameter parameter, Logger logger, ServerHttpRequest exchange) {
         var clazz = genericClassName(parameter);
 
         var filter = new Filter<>();
