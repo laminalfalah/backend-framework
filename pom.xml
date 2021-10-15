@@ -116,6 +116,11 @@
             </dependency>
             <dependency>
                 <groupId>io.github.laminalfalah</groupId>
+                <artifactId>backend-framework-metric</artifactId>
+                <version>${framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.laminalfalah</groupId>
                 <artifactId>backend-framework-mvc</artifactId>
                 <version>${framework.version}</version>
             </dependency>
