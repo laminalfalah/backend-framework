@@ -52,6 +52,7 @@
 
     <modules>
         <module>backend-framework-common</module>
+        <module>backend-framework-metric</module>
         <module>backend-framework-mvc</module>
         <module>backend-framework-reactive</module>
         <module>backend-framework-swagger</module>

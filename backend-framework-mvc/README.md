@@ -18,21 +18,33 @@ public class ExampleController {
 
     private final ExampleService service;
 
+    // Without Authentication
     @GetMapping
-    @Authentication(bypassMiddleware = true) // Without Authentication
     public ResponseEntity<?> index(Filter<ExampleFilter> filter) {
         return ResponseEntity.ok(service.index(filter));
     }
-    
+
+    // With Authentication
     @GetMapping("/{id}")
-    @Authentication // With Authentication
+    @Authentication
     public ResponseEntity<?> show(@PathVariable("id") int id) {
         return ResponseEntity.ok(service.show(id));
     }
+    
+    @Data
+    @FilterQueryParam
+    static class ExampleFilter {
+        
+        @FilterColumn("fullName")
+        private String name;
+    }
 }
 ```
-Noted: Untuk penggunaan `@Authentication` pada controller. jangan lupa membuat class 
-implementation seperti dibawah ini.
+Noted: Untuk penggunaan `Filter` pada parameter method controller, 
+jangan lupa tambahkan `@FilterQueryParam`.
+
+Noted: Untuk penggunaan `@Authentication` pada controller,
+jangan lupa membuat class implementation seperti dibawah ini.
 ### Create Interceptor for app
 ```java
 @Component
