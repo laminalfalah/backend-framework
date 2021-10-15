@@ -24,8 +24,7 @@ package io.github.laminalfalah.backend.metric;
  * @author laminalfalah on 15/10/21
  */
 
-public class Constant {
-    public static final String JVM = "jvm";
+public final class Constant {
     public static final String ID = "id";
     public static final String USED = "used";
     public static final String MAX = "max";
@@ -47,14 +46,10 @@ public class Constant {
     public static final String HIBERNATE = "hibernate";
     public static final String NAME = "name";
     public static final String RESULT = "result";
-    public static final String SERVICES = "services";
     public static final String URI = "uri";
     public static final String METHOD = "method";
-    public static final String DATABASES = "databases";
     public static final String HIKARI = "hikari";
     public static final String TOTAL_TIME = "totalTime";
-    public static final String GARBAGE_COLLECTOR = "garbageCollector";
-    public static final String PROCESS_METRICS = "processMetrics";
     public static final String CPU = "cpu";
     public static final String SYSTEM = "system";
     public static final String PROCESS = "process";

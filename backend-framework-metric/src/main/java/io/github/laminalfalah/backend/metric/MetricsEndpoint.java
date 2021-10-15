@@ -20,43 +20,9 @@ package io.github.laminalfalah.backend.metric;
  * limitations under the License.
  */
 
-import static io.github.laminalfalah.backend.metric.Constant.ALL;
-import static io.github.laminalfalah.backend.metric.Constant.CACHE;
-import static io.github.laminalfalah.backend.metric.Constant.CLASSES_LOADED;
-import static io.github.laminalfalah.backend.metric.Constant.CLASSES_UNLOADED;
-import static io.github.laminalfalah.backend.metric.Constant.COMMITTED;
-import static io.github.laminalfalah.backend.metric.Constant.COUNT;
-import static io.github.laminalfalah.backend.metric.Constant.CPU;
-import static io.github.laminalfalah.backend.metric.Constant.DATABASES;
-import static io.github.laminalfalah.backend.metric.Constant.GARBAGE_COLLECTOR;
-import static io.github.laminalfalah.backend.metric.Constant.HIBERNATE;
-import static io.github.laminalfalah.backend.metric.Constant.HIKARI;
-import static io.github.laminalfalah.backend.metric.Constant.HTTP_PER_CODE;
-import static io.github.laminalfalah.backend.metric.Constant.HTTP_SERVER_REQUESTS;
-import static io.github.laminalfalah.backend.metric.Constant.ID;
-import static io.github.laminalfalah.backend.metric.Constant.JVM;
-import static io.github.laminalfalah.backend.metric.Constant.JVM_CLASSES_LOADED;
-import static io.github.laminalfalah.backend.metric.Constant.JVM_CLASSES_UNLOADED;
-import static io.github.laminalfalah.backend.metric.Constant.JVM_GC;
-import static io.github.laminalfalah.backend.metric.Constant.JVM_GC_PAUSE;
-import static io.github.laminalfalah.backend.metric.Constant.JVM_MEMORY_COMMITTED;
-import static io.github.laminalfalah.backend.metric.Constant.JVM_MEMORY_MAX;
-import static io.github.laminalfalah.backend.metric.Constant.JVM_MEMORY_USED;
-import static io.github.laminalfalah.backend.metric.Constant.MAX;
-import static io.github.laminalfalah.backend.metric.Constant.MEAN;
-import static io.github.laminalfalah.backend.metric.Constant.METHOD;
-import static io.github.laminalfalah.backend.metric.Constant.MISSING_NAME_TAG_MESSAGE;
-import static io.github.laminalfalah.backend.metric.Constant.NAME;
-import static io.github.laminalfalah.backend.metric.Constant.PROCESS;
-import static io.github.laminalfalah.backend.metric.Constant.PROCESS_METRICS;
-import static io.github.laminalfalah.backend.metric.Constant.RESULT;
-import static io.github.laminalfalah.backend.metric.Constant.SERVICES;
-import static io.github.laminalfalah.backend.metric.Constant.STATUS;
-import static io.github.laminalfalah.backend.metric.Constant.SYSTEM;
-import static io.github.laminalfalah.backend.metric.Constant.TOTAL_TIME;
-import static io.github.laminalfalah.backend.metric.Constant.URI;
-import static io.github.laminalfalah.backend.metric.Constant.USED;
+import static io.github.laminalfalah.backend.metric.Constant.*;
 
+import io.github.laminalfalah.backend.metric.model.MetricsResponse;
 import io.micrometer.core.instrument.FunctionCounter;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -85,16 +51,16 @@ public class MetricsEndpoint {
     private final MeterRegistry meterRegistry;
 
     @ReadOperation
-    public Map<String, Map> allMetrics() {
-        var results = new HashMap<String, Map>();
-        results.put(JVM, jvmMemoryMetrics());
-        results.put(HTTP_SERVER_REQUESTS, httpRequestsMetrics());
-        results.put(CACHE, cacheMetrics());
-        results.put(SERVICES, serviceMetrics());
-        results.put(DATABASES, databaseMetrics());
-        results.put(GARBAGE_COLLECTOR, garbageCollectorMetrics());
-        results.put(PROCESS_METRICS, processMetrics());
-        return results;
+    public MetricsResponse allMetrics() {
+        return MetricsResponse.builder()
+            .jvm(jvmMemoryMetrics())
+            .httpServerRequests(httpRequestsMetrics())
+            .cache(cacheMetrics())
+            .services(serviceMetrics())
+            .databases(databaseMetrics())
+            .garbageCollector(garbageCollectorMetrics())
+            .processMetrics(processMetrics())
+            .build();
     }
 
     private Map<String, Map<String, Number>> jvmMemoryMetrics() {
@@ -122,10 +88,10 @@ public class MetricsEndpoint {
         return resultsJvm;
     }
 
-    private Map<String, Map> httpRequestsMetrics() {
+    private Map<String, Object> httpRequestsMetrics() {
         var statusCode = new HashSet<String>();
 
-        var resultsHttp = new HashMap<String, Map>();
+        var resultsHttp = new HashMap<String, Object>();
         var resultsHttpPerCode = new HashMap<String, Map<String, Number>>();
 
         var resultsHttpAll = new HashMap<String, Number>();
@@ -177,7 +143,7 @@ public class MetricsEndpoint {
     }
 
     private Map<String, Map<String, Number>> cacheMetrics() {
-        Map<String, Map<String, Number>> resultsCache = new HashMap<>();
+        var resultsCache = new HashMap<String, Map<String, Number>>();
 
         Search.in(meterRegistry).name(s -> s.contains(CACHE) && !s.contains(HIBERNATE))
             .functionCounters()
@@ -209,18 +175,18 @@ public class MetricsEndpoint {
         return resultsCache;
     }
 
-    private Map<String, Map> serviceMetrics() {
+    private Map<String, Map<String, Map<String, Number>>> serviceMetrics() {
         var crudOperations = Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE");
 
         var uris = new HashSet<String>();
 
-        var resultsService = new HashMap<String, Map>();
+        var resultsService = new HashMap<String, Map<String, Map<String, Number>>>();
 
         meterRegistry.find(HTTP_SERVER_REQUESTS).timers()
             .forEach(timer -> uris.add(timer.getId().getTag(URI)));
 
         uris.forEach(uri -> {
-            var resultsPerUri = new HashMap<String, Map>();
+            var resultsPerUri = new HashMap<String, Map<String, Number>>();
 
             crudOperations.forEach(operation -> {
                 var resultsPerUriPerCrudOperation = new HashMap<String, Number>();
