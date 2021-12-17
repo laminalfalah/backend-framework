@@ -40,6 +40,9 @@ public @interface FilterColumn {
 
     String parameterName() default "";
 
+    @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+    String fieldNameSql() default "";
+
     String dateFormat() default "yyyy-MM-dd";
 
     String dateTimeFormat() default "yyyy-MM-dd HH:mm:ss";
@@ -47,6 +50,6 @@ public @interface FilterColumn {
     String timeFormat() default "HH:mm:ss";
 
     @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-    Operation[] operations() default {Operation.EQUALS};
+    Operation operations() default Operation.EQUALS;
 
 }

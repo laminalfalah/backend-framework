@@ -22,13 +22,9 @@ package io.github.laminalfalah.backend.common.filter;
 
 import io.github.laminalfalah.backend.common.annotation.FilterColumn;
 import io.github.laminalfalah.backend.common.helper.AbstractFieldAnnotationHelper;
+import java.lang.reflect.Field;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
-
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author laminalfalah on 07/07/21
@@ -46,7 +42,10 @@ public class FilterField extends AbstractFieldAnnotationHelper<FilterColumn> {
     private final String timeFormatter;
 
     @Getter
-    private final List<Operation> operations;
+    private final Operation operation;
+
+    @Getter
+    private final String fieldNameSql;
 
     public static FilterField.Builder builder() {
         return new Builder();
@@ -78,7 +77,8 @@ public class FilterField extends AbstractFieldAnnotationHelper<FilterColumn> {
         this.dateFormatter = getFilterDateFormat(annotation);
         this.dateTimeFormatter = getFilterDateTimeFormat(annotation);
         this.timeFormatter = getFilterTimeFormat(annotation);
-        this.operations = getOperations(annotation);
+        this.operation = getOperation(annotation);
+        this.fieldNameSql = getFieldNameSql(annotation);
     }
 
     protected String getFilterParameterName(FilterColumn column) {
@@ -103,8 +103,12 @@ public class FilterField extends AbstractFieldAnnotationHelper<FilterColumn> {
         return column == null || StringUtils.isEmpty(column.timeFormat().trim()) ? "HH:mm:ss" : column.timeFormat();
     }
 
-    private List<Operation> getOperations(FilterColumn column) {
-        return column == null ? Collections.singletonList(Operation.EQUALS) : Arrays.asList(column.operations());
+    private Operation getOperation(FilterColumn column) {
+        return column == null ? Operation.EQUALS : column.operations();
+    }
+
+    private String getFieldNameSql(FilterColumn column) {
+        return column == null ? getFieldName() : column.fieldNameSql();
     }
 
 }

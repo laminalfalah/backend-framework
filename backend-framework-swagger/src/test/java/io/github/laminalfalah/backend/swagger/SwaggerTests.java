@@ -72,6 +72,17 @@ class SwaggerTests {
 
     @Test
     @Order(2)
+    @DisplayName("Testing Redirect Swagger")
+    void testRedirectSwagger() throws Exception {
+        mockMvc.perform(get("/docs/swagger-ui/3.52.3/index.html")
+                .param("configUrl", "/v3/api-docs/swagger-config")
+            )
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    @Order(3)
     @DisplayName("Testing api-docs contains info")
     void testApiDocs() throws Exception {
         mockMvc.perform(get("/v3/api-docs"))
@@ -83,7 +94,7 @@ class SwaggerTests {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     @DisplayName("Testing api-docs contains paths")
     void testController() throws Exception {
         mockMvc.perform(get("/v3/api-docs"))

@@ -1,9 +1,9 @@
-package io.github.laminalfalah.backend.common.filter;
+package io.github.laminalfalah.backend.common.exception;
 
 /*
  * Copyright (C) 2021 the original author laminalfalah All Right Reserved.
  *
- * io.github.laminalfalah.backend.common.filter
+ * io.github.laminalfalah.backend.common.exception
  *
  * This is part of the backend-framework.
  *
@@ -21,16 +21,17 @@ package io.github.laminalfalah.backend.common.filter;
  */
 
 /**
- * @author laminalfalah on 22/07/21
+ * @author laminalfalah on 18/10/21
  */
 
-public enum Operation {
-    LESS_THAN, LESS_THAN_OR_EQUALS,
-    EQUALS, EQUALS_LOWER, EQUALS_UPPER,
-    GREATER_THAN, GREATER_THAN_OR_EQUALS,
-    LIKE, LIKE_LOWER, LIKE_UPPER,
-    START_WITH, START_WITH_LOWER, START_WITH_UPPER,
-    END_WITH, END_WITH_LOWER, END_WITH_UPPER,
-    IN, IN_NOT,
-    NULLABLE, NOT_NULLABLE
+public class SpecificationException extends RuntimeException {
+
+    public SpecificationException(String message) {
+        super(message);
+    }
+
+    public SpecificationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }

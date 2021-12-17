@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
 /**
  * @author laminalfalah on 12/10/21
@@ -39,6 +40,10 @@ public interface AuthenticationInterceptor extends HandlerInterceptor {
 
     @Override
     default boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        if (handler instanceof ResourceHttpRequestHandler) {
+            return true;
+        }
+
         if (!(handler instanceof HandlerMethod)) {
             return false;
         }

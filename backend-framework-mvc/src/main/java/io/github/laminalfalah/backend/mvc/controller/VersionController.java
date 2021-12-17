@@ -21,6 +21,7 @@ package io.github.laminalfalah.backend.mvc.controller;
  */
 
 import io.github.laminalfalah.backend.common.version.Versioning;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "/version", produces = MediaType.TEXT_PLAIN_VALUE)
+@Tag(name = "Version Controller", description = "Version App")
 public class VersionController extends Versioning {
 
     @GetMapping

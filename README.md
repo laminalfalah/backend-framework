@@ -24,6 +24,9 @@ Tidak semua package harus di implementation. Pilih beberapa packages saja. karen
 [![bugs][sonar-bugs]][sonar-url] 
 [![vulnerabilities][sonar-vulnerabilities]][sonar-url]
 
+### Wakatime
+[![wakatime][wakatime-badge]][wakatime-url]
+
 ### Setup
 ```xml
 <parent>
@@ -74,6 +77,9 @@ or
 [sonar-coverage]: https://sonarcloud.io/api/project_badges/measure?project=laminalfalah_backend-framework&metric=coverage
 [sonar-bugs]: https://sonarcloud.io/api/project_badges/measure?project=laminalfalah_backend-framework&metric=bugs
 [sonar-vulnerabilities]: https://sonarcloud.io/api/project_badges/measure?project=laminalfalah_backend-framework&metric=vulnerabilities
+
+[wakatime-url]: https://wakatime.com/badge/github/laminalfalah/backend-framework
+[wakatime-badge]: https://wakatime.com/badge/github/laminalfalah/backend-framework.svg
 
 [example-mvc-jpa]: https://github.com/laminalfalah/example-backend-framework-mvc-jpa
 [example-webflux-r2dbc]: https://github.com/laminalfalah/example-backend-framework-webflux-r2dbc

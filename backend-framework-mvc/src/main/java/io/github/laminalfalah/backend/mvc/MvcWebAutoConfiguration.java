@@ -21,10 +21,10 @@ package io.github.laminalfalah.backend.mvc;
  */
 
 import io.github.laminalfalah.backend.common.filter.ContractFilterMapper;
-import io.github.laminalfalah.backend.mvc.filter.FilterMapper;
-import io.github.laminalfalah.backend.mvc.interceptor.AuthenticationInterceptor;
 import io.github.laminalfalah.backend.common.properties.PagingProperties;
+import io.github.laminalfalah.backend.mvc.filter.FilterMapper;
 import io.github.laminalfalah.backend.mvc.filter.FilterRequestArgumentResolver;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -37,10 +37,7 @@ import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.List;
 
 /**
  * @author laminalfalah on 07/07/21
@@ -54,8 +51,6 @@ import java.util.List;
 public class MvcWebAutoConfiguration implements WebMvcConfigurer {
 
     private final PagingProperties properties;
-
-    private final AuthenticationInterceptor interceptor;
 
     @Bean
     public ContractFilterMapper<NativeWebRequest> getFilterMapper() {
@@ -82,8 +77,4 @@ public class MvcWebAutoConfiguration implements WebMvcConfigurer {
         resolvers.add(new FilterRequestArgumentResolver(getFilterMapper()));
     }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(interceptor);
-    }
 }

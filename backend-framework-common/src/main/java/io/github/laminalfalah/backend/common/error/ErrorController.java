@@ -25,6 +25,15 @@ import io.github.laminalfalah.backend.common.exception.UnauthorizedException;
 import io.github.laminalfalah.backend.common.helper.ErrorHelper;
 import io.github.laminalfalah.backend.common.helper.ResponseHelper;
 import io.github.laminalfalah.backend.common.payload.response.ResponseError;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.springframework.beans.InvalidPropertyException;
 import org.springframework.beans.TypeMismatchException;
@@ -38,16 +47,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
-import org.springframework.web.server.*;
-
-import javax.validation.ConstraintViolationException;
-import java.util.*;
-import java.util.stream.Collectors;
+import org.springframework.web.server.MethodNotAllowedException;
+import org.springframework.web.server.NotAcceptableStatusException;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.server.ServerErrorException;
+import org.springframework.web.server.ServerWebInputException;
+import org.springframework.web.server.UnsupportedMediaTypeStatusException;
 
 /**
  * @author laminalfalah on 08/07/21
@@ -307,6 +318,15 @@ public interface ErrorController extends MessageSourceAware {
 
         return ResponseEntity.internalServerError().body(
                 ResponseHelper.set(HttpStatus.INTERNAL_SERVER_ERROR, errors)
+        );
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    default ResponseEntity<ResponseError> objectOptimisticLockingFailure(ObjectOptimisticLockingFailureException e) {
+        getLogger().error(ObjectOptimisticLockingFailureException.class.getName(), e);
+
+        return ResponseEntity.internalServerError().body(
+            ResponseHelper.set(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage())
         );
     }
 }

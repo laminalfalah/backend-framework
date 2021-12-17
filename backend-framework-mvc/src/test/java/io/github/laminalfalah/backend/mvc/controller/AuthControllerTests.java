@@ -27,12 +27,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.laminalfalah.backend.common.annotation.Authentication;
+import io.github.laminalfalah.backend.mvc.interceptor.AuthenticationInterceptor;
 import io.github.laminalfalah.backend.mvc.interceptor.CustomInterceptor;
 import io.github.laminalfalah.backend.mvc.payload.LoginRequest;
 import io.github.laminalfalah.backend.mvc.service.AuthService;
 import java.nio.charset.Charset;
-import java.util.List;
-import javax.annotation.Resource;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,12 +45,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -60,6 +57,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @author laminalfalah on 12/10/21
@@ -179,6 +178,18 @@ class AuthControllerTests {
             @GetMapping("/who-am-i")
             public ResponseEntity<String> whoAmI() {
                 return ResponseEntity.ok(service.doWhoAmI());
+            }
+        }
+
+        @Configuration
+        @AllArgsConstructor
+        public static class InterceptorConfiguration implements WebMvcConfigurer {
+
+            private final AuthenticationInterceptor interceptor;
+
+            @Override
+            public void addInterceptors(InterceptorRegistry registry) {
+                registry.addInterceptor(interceptor);
             }
         }
     }
