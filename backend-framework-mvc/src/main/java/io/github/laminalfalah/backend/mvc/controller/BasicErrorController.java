@@ -31,6 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * @author laminalfalah on 16/10/21
@@ -46,7 +47,7 @@ public class BasicErrorController extends AbstractErrorController {
         super(errorAttributes);
     }
 
-    @RequestMapping
+    @GetMapping
     public ResponseEntity<ResponseError> error(HttpServletRequest request) {
         HttpStatus status = super.getStatus(request);
         return status == HttpStatus.NO_CONTENT
